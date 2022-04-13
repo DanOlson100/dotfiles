@@ -1,0 +1,51 @@
+# Bash Aliases
+
+alias ll='ls -l'
+alias la='ls -a'
+alias lla='ls -al'
+
+alias df='df -h'
+
+alias rm='rm -iv'
+alias cp='cp -iv'
+alias mv='mv -iv'
+
+alias vim='vim -X '
+alias view='vim -R '
+alias gdiff='gvim -d '
+alias vimfix='vim -N -u NONE -U NONE'
+
+alias dir='dir --color=auto'
+alias vdir='vdir --color=auto'
+
+alias diff_dir='diff -qr '
+
+alias pushdd='pushdd ./'
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+alias rsync_cp='rsync -Pvhpr'
+alias rsync_mv='rsync -Pvhpr --remove-sent-files'
+alias ncftpput='ncftpput -f ~/.netrc'
+
+alias agi='sudo apt install'
+alias agr='sudo apt remove'
+alias agu='sudo apt update'
+alias agg='sudo apt upgrade'
+
+alias gs='git status'
+alias gc='git commit'
+alias gd='git difftool'
+alias gdc='git difftool --cached'
+alias ggd='git difftool -g'
+alias ggdc='git difftool -g --cached'
+
+alias findorphans='find / -nouser -ls'
+
+alias cd..='cd ..'
+alias ..='cd ..'
+alias ...='cd ../..'
+
+

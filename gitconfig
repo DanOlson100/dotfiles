@@ -1,0 +1,115 @@
+[advice]
+    statusHints = false
+
+[alias]
+    amend = commit --amend
+    ammend = amend
+    ci = commit
+    co = checkout
+    d = difftool
+    dc = difftool --cached
+    gd = difftool -g
+    gdc = difftool -g --cached
+    lgfile    = log --date=short --reverse --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit --follow
+    hist      = log --date=short --reverse --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit
+    histlong  = log --date=short --reverse --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit --shortstat
+    tagage = !sh -c 'git for-each-ref --sort=taggerdate refs/tags --format=\"%(refname:short)\"'
+    sb = status -sb
+    whatrelease = name-rev --name-only
+    unstage = reset HEAD
+    upstream = rev-parse --symbolic-full-name --abbrev-ref HEAD@{upstream}
+    where = remote show origin
+
+[color]
+    branch = auto
+    diff = auto
+    interactive = auto
+    pager = true
+    status = auto
+    ui = auto
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = red
+
+[column]
+    ui = auto
+
+[commit]
+    verbose = true
+
+[core]
+    pager = less -FRX 
+    editor = vim
+    excludesfile = ~/.gitignore_global
+    whitespace = trailing-space,space-before-tab
+
+[diff]
+    tool = vimdiff
+    guitool = gvimdiff
+    renameLimit = 250
+
+[difftool]
+    prompt = false
+
+[difftool "vimdiff"]
+    cmd = "vimdiff --nofork $REMOTE $LOCAL"
+
+[difftool "gvimdiff"]
+    cmd = "gvimdiff --nofork $REMOTE $LOCAL"
+
+[fetch]
+    fsckObjects = true
+# Needed for the vim pluggin vim-mark because of bad timezones in commits
+#    fsckObjects = false
+
+[init]
+	defaultBranch = main
+
+[merge]
+    conflictStyle = diff3
+    tool = vimdiff
+    log = true
+    branchdesc = true
+    stat = true
+
+[push]
+    default = matching
+
+[pull]
+    ff = only
+#    rebase = true
+
+[rerere]
+    autoUpdate = true
+    enabled = true
+
+[status]
+    relativePaths = true
+    showUntrakedFiles = normal
+
+[url "https://bitbucket.org/"]
+    insteadOf = bb:
+
+[url "https://github.com/"]
+    insteadOf = gh:
+
+[url "https://gist.github.com/"]
+    insteadOf = gist:
+
+[user]
+    name = Dan Olson
+    email = danolson100@gmail.com
+

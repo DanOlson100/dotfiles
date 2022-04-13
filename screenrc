@@ -1,0 +1,53 @@
+# Dan's Screen RC File
+#
+
+# No Startup Message
+startup_message off
+
+# Auto Detach On
+autodetach on
+
+# Set the Shell
+shell bash
+
+# Turn the damn bell off
+vbell off
+
+#Dynamic Title-ing
+shelltitle "$ |bash"
+
+# Hardstatus at the bottom
+hardstatus alwayslastline "%{= ky} Screen: %{= kb}%c:%s  %D %m.%d.%Y %{= kw}| Help C-a ?  C-a [ Scroll | %{= kg}%l %{= kw} | %{= kr}%-Lw%{= rk}%50> %n%f* %t%{-}%+Lw%<"
+
+# Default Scrollback
+defscrollback 9000
+
+# Don't block the whole session waiting for a window
+nonblock on
+
+# Fix residual editor text
+altscreen on
+
+# Message Displayed for 1 sec
+msgwait .5
+
+# Start at Window 1
+bind c screen 1
+bind 0 select 10
+screen 1
+select 1
+
+# # Unbind Dangerous keys
+bind k
+bind ^k
+bind .
+bind ^\
+bind \\
+bind ^h
+bind h
+
+# # Tell screen that your term can scroll
+termcapinfo xterm* ti@:te@
+bindkey -m "^[[5~" stuff ^b
+bindkey -m "^[[6~" stuff ^f
+
