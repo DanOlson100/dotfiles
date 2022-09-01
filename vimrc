@@ -8,7 +8,7 @@
 "    PlugUpdate  - Update installed plug-ins
 "    PlugUpgrade - Upgrade the plugged Plug-in
 "    PlugStatus  - Fetch the status of the Plug-ins
-if !empty(glob("~/.vim/plugged"))
+if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
     call plug#begin('~/.vim/plugged')
     Plug 'airblade/vim-gitgutter'                       "Git Changes in Gutter
     Plug 'ap/vim-css-color'                             "CSS color highlighter
@@ -20,6 +20,7 @@ if !empty(glob("~/.vim/plugged"))
     Plug 'inkarkat/vim-mark'                            "Mark Words to Highlight
     Plug 'inkarkat/vim-ingo-library'                    "Dep Lib for vim-mark
     Plug 'jreybert/vimagit'                             "Some git cmds added to Vim
+    Plug 'junegunn/fzf.vim'                             "FZF Vim integration with common Cmd maps
     Plug 'kshenoy/vim-signature'                        "Shows marks and move between them
     Plug 'nathanaelkane/vim-indent-guides'              "Indent Color guides
     Plug 'neoclide/coc.nvim', { 'branch': 'release', 'on': 'CoCToggle' }
@@ -34,7 +35,6 @@ if !empty(glob("~/.vim/plugged"))
     Plug 'tpope/vim-fugitive'                           "Git in Vim
     Plug 'tpope/vim-surround'                           "Add/Remove Surrounding anythino
     Plug 'vim-scripts/IndexedSearch'                    "Upgrade Search with status and location
-    Plug 'vim-syntastic/syntastic', { 'on': 'SyntasticToggle' } "Syntax Checking for Vim
     call plug#end()
 endif
 "  }}}
@@ -71,7 +71,7 @@ set undofile                                "Use Undo files to let undo work acr
 syntax on                                         "Turn on syntax highlighting
 set background=dark                               "Try to use good colors
 
-if !empty(glob("~/.vim/colors/molo.vim"))
+if !empty(glob("~/.vim/plugged/molo/colors/molo.vim"))
     colorscheme molo                              "Set the color scheme
 elseif !empty(glob("~/vimfiles/colors/molo.vim"))
     colorscheme molo                              "Set the color scheme for Win
@@ -121,7 +121,7 @@ endif
 if !empty(glob("~/.vim/plugged/vim-fugitive/"))
     augroup gitstatusline
         au!
-        autocmd BufEnter,FocusGained,BufWritePost *  let b:git_status = fugitive#head()
+        autocmd BufEnter,FocusGained,BufWritePost *  let b:git_status = fugitive#Head()
     augroup END
 else
     let b:git_status = ""
@@ -216,6 +216,8 @@ set foldlevelstart=0
 " }}}
 """""""""""""""""""""""""""""""""""""""""""""""""
 " FZF Settings                                {{{
+
+" Add the path to FZF
 if !empty(glob("~/.fzf/"))
     set rtp+=~/.fzf
 endif
