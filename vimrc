@@ -367,7 +367,7 @@ augroup END
 """""""""""""""""""""""""""""""""""""""""""""""""
 " Filetypes                                   {{{
 
-if !empty(glob("~/.vim/fileypes.vim"))
+if !empty(glob("~/.vim/filetypes.vim"))
     source ~/.vim/filetypes.vim
 elseif !empty(glob("~/vimfiles/fileypes.vim"))
     source ~/vimfiles/filetypes.vim
