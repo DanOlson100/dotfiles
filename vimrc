@@ -291,6 +291,9 @@ nnoremap K <PageUp>
 " Correct Wq
 cnoreabbrev Wq wq
 
+" Correct Q
+cnoreabbrev Q q
+
 "Map ^u to Uppercase the current word
 inoremap  <C-u> <Esc>mogUiw`oa
 
@@ -352,12 +355,14 @@ augroup comments
     "Add a comment shortcut based on filetype
     au FileType vim                   nnoremap <leader>c mogI"<ESC>`o
     au FileType sh,bash,csh,perl      nnoremap <leader>c mogI#<ESC>`o
+    au FileType yaml,python           nnoremap <leader>c mogI#<ESC>`o
     au FileType c,cpp                 nnoremap <leader>c mogI//<ESC>`o
     au FileType skill                 nnoremap <leader>c mogI;<ESC>`o
 
     "Remove a comment shortcut based on filetype
     au FileType vim                   nnoremap <leader>z mo<CMD>s/"//<CR><CMD>nohlsearch<CR>`o
     au FileType sh,bash,csh,perl      nnoremap <leader>z mo<CMD>s/#//<CR><CMD>nohlsearch<CR>`o
+    au FileType yaml,python           nnoremap <leader>z mo<CMD>s/#//<CR><CMD>nohlsearch<CR>`o
     au FileType c,cpp                 nnoremap <leader>z mo<CMD>s/\/\///<CR><CMD>nohlsearch<CR>`o
     au FileType skill                 nnoremap <leader>z mo<CMD>s/;//<CR><CMD>nohlsearch<CR>`o
 

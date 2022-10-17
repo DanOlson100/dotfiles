@@ -1,12 +1,16 @@
 # Dan's Zsh File
-
-#Skip All for non-interactive shells
-[[ -z "$PS1" ]] && return
+#
+# These are the Git Plug-ins Needed
+#  https://github.com/woefe/git-prompt.zsh
+#  https://github.com/zsh-users/zsh-autosuggestions
+#  https://github.com/zsh-users/zsh-syntax-highlighting
+#  https://github.com/shaunsauve/zsh-dirhistory.git
+#  the git-prompt needs a utf-8 
 
 # Enable Colors
 autoload -U colors && colors
 
-# History
+# History Settings
 HISTFILE=~/.zsh_histfile
 HISTSIZE=1000
 SAVEHIST=1000
@@ -17,28 +21,33 @@ setopt HIST_REDUCE_BLANKS
 setopt HIST_VERIFY
 setopt SHARE_HISTORY
 
-# Basic auto/tab complete with case insensitivity
+# Basic auto/tab complete with case insensitivity, substring search and coloring
+# The last line is for globing dotfiles.
 autoload -Uz compinit
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zmodload zsh/complist
 compinit
 _comp_options+=(globdots)
 
-# Other Options
+# Report CPU Time > 30s
+# Set CLI Color and Editors
 export REPORTTIME=30
 export CLICOLOR=1
 export EDITOR=vim
 export VISUAL=gvim
+export SHELL=`which zsh`
+export HOST=`hostname`
 
-setopt AUTO_CONTINUE
-setopt NOCLOBBER
-setopt AUTO_CD
-setopt CORRECT_ALL
-setopt AUTO_LIST
-setopt AUTO_MENU
-setopt ALWAYS_TO_END
+# Set Options
+setopt AUTO_CONTINUE  # Auto send a job a CONT signal
+setopt NO_CLOBBER     # Don't clobber exiting files w/ redirect 
+setopt AUTO_CD        # If cmd is a dir, auto cd in
+setopt CORRECT_ALL    # Try to auto correct arg spelling
+setopt AUTO_LIST      # Auto list choices on an ambiguous completion
+setopt AUTO_MENU      # Use menu completion after the 2nd request for completion
+setopt ALWAYS_TO_END  # Goto End on completion
 
 # VI Mode
 bindkey -v
@@ -51,6 +60,7 @@ bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '^?' backward-delete-char
 
+# Create new Keymap
 # Change cursor shape for different vi modes.
 function zle-keymap-select {
   if [[ ${KEYMAP} == vicmd ]] ||
@@ -64,13 +74,20 @@ function zle-keymap-select {
   fi
 }
 zle -N zle-keymap-select
+
+# Create new Keymap
+# Setup vi insert emulation
 zle-line-init() {
     zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
     echo -ne "\e[5 q"
 }
 zle -N zle-line-init
-echo -ne '\e[5 q' # Use beam shape cursor on startup.
-preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
+
+# Set Cursor shape on startup
+echo -ne '\e[5 q'
+
+# Use beam shape cursor for each new prompt.
+preexec() { echo -ne '\e[5 q' ;} 
 
 # Use lf to switch directories and bind it to ctrl-o
 lfcd () {
@@ -121,7 +138,6 @@ if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"¬
 else
     # FreeBSD¬
-    export CLICOLOR="1"¬
     export LSCOLORS="Exfxcxdxbxegedabagacad"¬
 fi
 
@@ -134,7 +150,7 @@ else
     alias duhh='du -h -d1'
 fi
 
-# Setup the Prompt
+# Load the Git Promp Plugin and setup the Prompt
 if [ -f ~/.zsh/git-prompt.zsh/git-prompt.zsh ];then
     source ~/.zsh/git-prompt.zsh/git-prompt.zsh
 fi
@@ -146,14 +162,19 @@ if [ `hostname -s` = "hellcat" ]; then
     export VIMRUNTIME='/mnt/HGST_3T/iocage/jails/JAIL_R11.3/root/usr/local/share/vim/vim81'
 fi
 
-# Source Auto Suggestions
+# Setup Auto Suggestions Plugin
 if [ -f ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
     source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
-# Source Syntax Highlighting
+# Setup Syntax Highlighting Plugin
 if [ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
     source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# Setup Dir History Plugin
+if [ -f ~/.zsh/zsh-dirhistory/dirhistory.plugin.zsh ]; then
+    source ~/.zsh/zsh-dirhistory/dirhistory.plugin.zsh
 fi
 
 # Source fzf shell integrations
