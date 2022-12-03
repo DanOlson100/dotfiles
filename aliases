@@ -35,6 +35,11 @@ alias agr='sudo apt remove'
 alias agu='sudo apt update'
 alias agg='sudo apt upgrade'
 
+alias ngi='sudo nala install'
+alias ngr='sudo nala remove'
+alias ngu='sudo nala update'
+alias ngg='sudo nala upgrade'
+
 alias gs='git status'
 alias gc='git commit'
 alias gd='git difftool'
