@@ -39,6 +39,8 @@ export EDITOR=vim
 export VISUAL=gvim
 export SHELL=`which zsh`
 export HOST=`hostname`
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
 
 # Set Options
 setopt AUTO_CONTINUE  # Auto send a job a CONT signal
