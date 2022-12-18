@@ -4,6 +4,7 @@
 #  https://github.com/woefe/git-prompt.zsh
 #  https://github.com/zsh-users/zsh-autosuggestions
 #  https://github.com/zsh-users/zsh-syntax-highlighting
+#  https://github.com/softmoth/zsh-vim-mode
 #  https://github.com/shaunsauve/zsh-dirhistory.git
 #  the git-prompt needs a utf-8 
 
@@ -50,6 +51,7 @@ setopt CORRECT_ALL    # Try to auto correct arg spelling
 setopt AUTO_LIST      # Auto list choices on an ambiguous completion
 setopt AUTO_MENU      # Use menu completion after the 2nd request for completion
 setopt ALWAYS_TO_END  # Goto End on completion
+setopt PROMPT_SUBST   # If set prompt get cmd sub and arith expansion
 
 # VI Mode
 bindkey -v
@@ -110,14 +112,10 @@ bindkey '^e' edit-command-line
 zstyle :compinstall filename '~/.zshrc'
 
 # Set user PATH if it exists
-if [ -d ~/bin ]; then
-    PATH=$PATH:~/bin
-fi
+[ -d ~/bin ] && PATH=$PATH:~/bin
 
 # Setup the Aliases
-if [ -f ~/.aliases ]; then 
-    source ~/.aliases
-fi
+[ -f ~/.aliases ] && source ~/.aliases
 
 ########## Alias definitions ##################
 # FreeBSD doesn't have ls -N or ls --color=auto
@@ -152,11 +150,9 @@ else
     alias duhh='du -h -d1'
 fi
 
-# Load the Git Promp Plugin and setup the Prompt
-if [ -f ~/.zsh/git-prompt.zsh/git-prompt.zsh ];then
-    source ~/.zsh/git-prompt.zsh/git-prompt.zsh
-fi
-PROMPT='[%(?.%F{green}OK.%F{red}?%?)%F{reset}] $(gitprompt)%F{magenta}%n%F{yellow}@%F{green}%m%F{yellow}:%F{blue}%~%F{yellow}$ %F{reset}'
+[ -f '/usr/bin/nala'   ] && alias apt='nala'
+[ -f '/usr/bin/exa'    ] && alias ls='exa'
+[ -f '/usr/bin/batcat' ] && alias cat='batcat'
 
 # Let Vim Work in FreeNAS if there is a Jail¬
 if [ `hostname -s` = "hellcat" ]; then
@@ -165,21 +161,34 @@ if [ `hostname -s` = "hellcat" ]; then
 fi
 
 # Setup Auto Suggestions Plugin
-if [ -f ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
-    source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-fi
+[ -f ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ] && source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Setup Syntax Highlighting Plugin
-if [ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-    source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
+[ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Setup Dir History Plugin
-if [ -f ~/.zsh/zsh-dirhistory/dirhistory.plugin.zsh ]; then
-    source ~/.zsh/zsh-dirhistory/dirhistory.plugin.zsh
-fi
+[ -f ~/.zsh/zsh-dirhistory/dirhistory.plugin.zsh ] && source ~/.zsh/zsh-dirhistory/dirhistory.plugin.zsh
+
+# Setup Vim Mode Plugin (Needs setopt PROMP_SUBST)
+[ -f  ~/.zsh/zsh-vim-mode/zsh-vim-mode.plugin.zsh ] && source ~/.zsh/zsh-vim-mode/zsh-vim-mode.plugin.zsh
+MODE_INDICATOR_VIINS='%F{2}I%f'
+MODE_INDICATOR_VICMD='%F{1}C%f'
+MODE_INDICATOR_REPLACE='%F{4}R%f'
+MODE_INDICATOR_SEARCH='%F{5}S%f'
+MODE_INDICATOR_VISUAL='%F{14}V%f'
+MODE_INDICATOR_VLINE='%F{6}L%f'
+
+# Load the Git Promp Plugin and setup the Prompt
+[ -f ~/.zsh/git-prompt.zsh/git-prompt.zsh ] && source ~/.zsh/git-prompt.zsh/git-prompt.zsh
+PROMPT='[%(?.%F{green}OK.%F{red}?%?)%F{reset}] [${MODE_INDICATOR_PROMPT}] $(gitprompt)%F{magenta}%n%F{yellow}@%F{green}%m%F{yellow}:%F{blue}%~%F{yellow}$ %F{reset}'
+RPS1=""
 
 # Source fzf shell integrations
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh && export FZF_DEFAULT_OPS="--extended"
 
+# Source Software Versions
+[ -f ~/.versions ] && source ~/.version
+
+# Add the Nala AutoComplete if it Exists
+[ -d ~/.zsh/.zfunc ] && fpath+=~/.zsh/.zfunc
 
