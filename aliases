@@ -49,6 +49,9 @@ alias ggdc='git difftool -g --cached'
 
 alias findorphans='find / -nouser -ls'
 
+alias background='feh --no-fehbg --bg-fill '
+#alias background='nitrogen --no-recurse '
+
 alias cd..='cd ..'
 alias ..='cd ..'
 alias ...='cd ../..'
