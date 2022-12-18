@@ -8,6 +8,7 @@
     co = checkout
     d = difftool
     dc = difftool --cached
+    forget = rm --cached
     gd = difftool -g
     gdc = difftool -g --cached
     lgfile    = log --date=short --reverse --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit --follow
