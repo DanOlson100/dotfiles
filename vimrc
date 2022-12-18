@@ -258,6 +258,9 @@ vnoremap L g_
 inoremap jj <Esc>
 vnoremap jj <Esc>
 
+" Map vv to <Ctrl>v to use besides Past
+noremap vv <C-v>
+
 " Use Space to toggle folds
 nnoremap <Space> za
 vnoremap <Space> za
