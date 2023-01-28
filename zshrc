@@ -40,8 +40,8 @@ export EDITOR=vim
 export VISUAL=gvim
 export SHELL=`which zsh`
 export HOST=`hostname`
-export LANG="en_US.UTF-8"
-export LC_ALL="en_US.UTF-8"
+export LANG=en_US.UTF-8
+#export LC_ALL="en_US.UTF-8"
 
 # Set Options
 setopt AUTO_CONTINUE  # Auto send a job a CONT signal
@@ -151,7 +151,7 @@ else
 fi
 
 [ -f '/usr/bin/nala'   ] && alias apt='nala'
-[ -f '/usr/bin/exa'    ] && alias ls='exa'
+[ -f '/usr/bin/exa'    ] && alias ls='exa -Fh --color=auto --group-directories-first'
 [ -f '/usr/bin/batcat' ] && alias cat='batcat'
 
 # Let Vim Work in FreeNAS if there is a Jail¬

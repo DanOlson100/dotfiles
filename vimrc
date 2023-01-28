@@ -23,12 +23,12 @@ if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
     Plug 'junegunn/fzf.vim'                             "FZF Vim integration with common Cmd maps
     Plug 'kshenoy/vim-signature'                        "Shows marks and move between them
     Plug 'nathanaelkane/vim-indent-guides'              "Indent Color guides
-    Plug 'neoclide/coc.nvim', { 'branch': 'release', 'on': 'CoCToggle' }
+    Plug 'neoclide/coc.nvim', { 'branch': 'release', 'on': 'ToggleCoC' }
     "Plug 'neoclide/coc.nvim', { 'branch': 'release' }   "Code Completion
     Plug 'rafi/awesome-vim-colorschemes'                "Collection of Vim Color Schemes
 "    Plug 'rickhowe/diffchar.vim', { 'frozen': 1 }       "Highlight only the Exact differences
     Plug 'rickhowe/diffchar.vim'                        "Highlight only the Exact differences
-    Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+    Plug 'scrooloose/nerdtree', { 'on': 'ToggleNerdTree' }
     Plug 'sheerun/vim-polyglot'                         "Collection of syntax highlights
     Plug 'tpope/vim-commentary'                         "Add/Remove Comment Characters
     Plug 'tpope/vim-eunuch'                             "Various System commands
