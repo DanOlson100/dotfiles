@@ -12,15 +12,16 @@
 autoload -U colors && colors
 
 # History Settings
-HISTFILE=~/.zsh_histfile
-HISTSIZE=1000
-SAVEHIST=1000
-setopt INC_APPEND_HISTORY
-setopt HIST_IGNORE_ALL_DUPS
-setopt HIST_IGNORE_SPACE
-setopt HIST_REDUCE_BLANKS
-setopt HIST_VERIFY
-setopt SHARE_HISTORY
+HISTFILE=~/.zsh_histfile       # History Save File
+HISTSIZE=100                   # Size of history in a session
+SAVEHIST=1000                  # Size of history file
+setopt INC_APPEND_HISTORY      # Add items to the history file imediately
+setopt HIST_IGNORE_ALL_DUPS    # Remove old dup commands from the history
+setopt HIST_IGNORE_SPACE       # Don't write commands that start with spaces to the history file
+setopt HIST_REDUCE_BLANKS      # Remove multiple blanks from commands in the history
+setopt HIST_VERIFY             # Show command with history expansion (!*) to user before running it 
+setopt EXTENDED_HISTORY        # Add timestamps to the history file
+setopt SHARE_HISTORY           # Share history between terminals
 
 # Basic auto/tab complete with case insensitivity, substring search and coloring
 # The last line is for globing dotfiles.
@@ -53,16 +54,9 @@ setopt AUTO_MENU      # Use menu completion after the 2nd request for completion
 setopt ALWAYS_TO_END  # Goto End on completion
 setopt PROMPT_SUBST   # If set prompt get cmd sub and arith expansion
 
-# VI Mode
+# Enable VI Key Mode
 bindkey -v
 export KEYTIMEOUT=1
-
-# Use vim keys in tab complete menu:
-bindkey -M menuselect 'h' vi-backward-char
-bindkey -M menuselect 'k' vi-up-line-or-history
-bindkey -M menuselect 'l' vi-forward-char
-bindkey -M menuselect 'j' vi-down-line-or-history
-bindkey -v '^?' backward-delete-char
 
 # Create new Keymap
 # Change cursor shape for different vi modes.
@@ -118,16 +112,11 @@ zstyle :compinstall filename '~/.zshrc'
 [ -f ~/.aliases ] && source ~/.aliases
 
 ########## Alias definitions ##################
-# FreeBSD doesn't have ls -N or ls --color=auto
 # Linux has quotes but ls -N disables
 # For root always show all ls -a·
 # Always append indicator ls -F
-if [ `uname` = "FreeBSD" ] && [ `whoami` = 'root' ]; then
-    alias ls='ls -aFhG'
-elif [ `uname` = "Linux" ] && [ `whoami` = 'root' ]; then
+if [ `whoami` = 'root' ]; then
     alias ls='ls -aFhN --color=auto --group-directories-first'
-elif [ `uname` = "FreeBSD" ]; then
-    alias ls='ls -FhG'
 else
     alias ls='ls -FhN --color=auto --group-directories-first'
 fi
@@ -136,29 +125,12 @@ fi
 if [ -x /usr/bin/dircolors ]; then
     # Linux¬
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"¬
-else
-    # FreeBSD¬
-    export LSCOLORS="Exfxcxdxbxegedabagacad"¬
 fi
 
-
-if [ `uname` = "FreBSD" ]; then
-    alias duh='du -h --max-depth=1'
-    alias duhh='du -h --max-depth=1'
-else
-    alias duh='du -h -d1'
-    alias duhh='du -h -d1'
-fi
-
+# Enable alternate cmds if available
 [ -f '/usr/bin/nala'   ] && alias apt='nala'
 [ -f '/usr/bin/exa'    ] && alias ls='exa -Fh --color=auto --group-directories-first'
 [ -f '/usr/bin/batcat' ] && alias cat='batcat'
-
-# Let Vim Work in FreeNAS if there is a Jail¬
-if [ `hostname -s` = "hellcat" ]; then
-    alias vim='/mnt/HGST_3T/iocage/jails/JAIL_R11.3/root/usr/local/bin/vim -X'
-    export VIMRUNTIME='/mnt/HGST_3T/iocage/jails/JAIL_R11.3/root/usr/local/share/vim/vim81'
-fi
 
 # Setup Auto Suggestions Plugin
 [ -f ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ] && source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -180,7 +152,7 @@ MODE_INDICATOR_VLINE='%F{6}L%f'
 
 # Load the Git Promp Plugin and setup the Prompt
 [ -f ~/.zsh/git-prompt.zsh/git-prompt.zsh ] && source ~/.zsh/git-prompt.zsh/git-prompt.zsh
-PROMPT='[%(?.%F{green}OK.%F{red}?%?)%F{reset}] [${MODE_INDICATOR_PROMPT}] $(gitprompt)%F{magenta}%n%F{yellow}@%F{green}%m%F{yellow}:%F{blue}%~%F{yellow}$ %F{reset}'
+PROMPT='[%(?.%F{green}OK.%F{red}?%?)%F{reset}] [Z] [${MODE_INDICATOR_PROMPT}] $(gitprompt)%F{magenta}%n%F{yellow}@%F{green}%m%F{yellow}:%F{blue}%~%F{yellow}$ %F{reset}'
 RPS1=""
 
 # Source fzf shell integrations
@@ -191,4 +163,26 @@ RPS1=""
 
 # Add the Nala AutoComplete if it Exists
 [ -d ~/.zsh/.zfunc ] && fpath+=~/.zsh/.zfunc
+
+# Move Keys to the End so they are not overwrote by Pluggins
+# Use vim keys in tab complete menu:
+bindkey -M menuselect 'h'  vi-backward-char
+bindkey -M menuselect 'k'  vi-up-line-or-history
+bindkey -M menuselect 'l'  vi-forward-char
+bindkey -M menuselect 'j'  vi-down-line-or-history
+
+# Add some VI keys
+bindkey -M viins      'jj' vi-cmd-mode
+bindkey -M vicmd      'H'  vi-beginning-of-line
+bindkey -M vicmd      'L'  vi-end-of-line
+
+# Use Arrow Keys to Search History
+# Use showkey -a to get key shortcuts
+bindkey '^[[A' history-beginning-search-backward
+bindkey '^[[B' history-beginning-search-forward
+#bindkey "$terminfo[kcuu1]" history-beginning-search-backward
+#bindkey "$terminfo[kcud1]" history-beginning-search-forward
+
+# Set the Key timeout in 100th of a second
+export KEYTIMEOUT=100
 
