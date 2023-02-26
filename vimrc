@@ -15,6 +15,7 @@ if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
     Plug 'chrisbra/vim-diff-enhanced'                   "Use GIT diff algorithms
     Plug 'cohama/lexima.vim', { 'on': 'AUTOClose' }     "Auto Close characters
     Plug 'danolson100/molo'                             "Molo Color Scheme
+    Plug 'dmerejkowsky/vim-ale'                         "Auto Linter Engine
     Plug 'frazrepo/vim-rainbow'                         "Enhanced Rainbow Parens
     Plug 'godlygeek/tabular'                            "For aligning text using :Tab /= or such
     Plug 'inkarkat/vim-mark'                            "Mark Words to Highlight
