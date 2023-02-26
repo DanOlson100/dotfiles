@@ -75,51 +75,24 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# Setup CVSROOT
-if [ `uname` = "FreeBSD" ]; then
-    CVSROOT="/mnt/HGST_3T/Warehouse/cvsroot"
-    export CVSROOT
-else
-    CVSROOT="/mnt/Warehouse/cvsroot"
-    export CVSROOT
-fi
-
 # Set Editor
 EDITOR="vim"
 export EDITOR
 
 ########## Alias definitions ##################
-# FreeBSD doesn't have ls -N or ls --color=auto
 # Linux has quotes but ls -N disables
 # For root always show all ls -a 
 # Always append indicator ls -F
-if [ `uname` = "FreeBSD" ] && [ `whoami` = 'root' ]; then
-    alias ls='ls -aFh'
-elif [ `uname` = "Linux" ] && [ `whoami` = 'root' ]; then
-    alias ls='ls -aFhN --color=auto'
-elif [ `uname` = "FreeBSD" ]; then
-    alias ls='ls -Fh'
+if [ `whoami` = 'root' ]; then
+    alias ls='ls -aFhN --color=auto --group-directories-first'
 else
-    alias ls='ls -FhN --color=auto'
-fi
-
-# Add Quick du for current directory
-if [ `uname` = "FreeBSD" ]; then
-    alias duh='du -h -d1'
-    alias duhh='du -h -d1'
-else
-    alias duh='du -h --max-depth=1'
-    alias duhh='du -h --max-depth=1'
+    alias ls='ls -FhN --color=auto --group-directories-first'
 fi
 
 # Enable color support of ls
 if [ -x /usr/bin/dircolors ]; then
     # Linux
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-else
-    # FreeBSD
-    export CLICOLOR="1"
-    export LSCOLORS="Exfxcxdxbxegedabagacad"
 fi
 
 # You may want to put all your additions into a separate file like
@@ -155,13 +128,6 @@ extract () {
     fi
 }
 
-# Let Vim Work in FreeNAS if there is a Jail
-if [ `hostname -s` = "hellcat" ]; then
-    alias vim='/mnt/HGST_3T/iocage/jails/JAIL_R11.3/root/usr/local/bin/vim -X'
-    export VIMRUNTIME='/mnt/HGST_3T/iocage/jails/JAIL_R11.3/root/usr/local/share/vim/vim81'
-fi
-
 # Source fzf Shell Integration
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
 

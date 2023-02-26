@@ -18,6 +18,11 @@ alias vimfix='vim -N -u NONE -U NONE'
 alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
 
+alias duh='du -h -x -d1'
+alias duhh='du -h -x -d1'
+alias duhs='du -h -x -d1 | sort -h'
+alias duhhs='du -h -x -d1 | sort -h'
+
 alias diff_dir='diff -qr '
 
 alias pushdd='pushdd ./'
