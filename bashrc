@@ -18,8 +18,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # For setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=10000
-HISTFILESIZE=200000
+HISTSIZE=1000
+HISTFILESIZE=2000
 
 # Check the window size after each command and, if necessary,
 # Update the values of LINES and COLUMNS.
@@ -46,14 +46,14 @@ fi
 
 # Set Color Prompt
 if [ `whoami` = 'root' ]; then
-    export PS1="${debian_chroot:+($debian_chroot)}\[\e[31m\]\u\[\e[m\]\[\e[33m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]\[\e[33m\]:\[\e[m\]\[\e[36m\]\w\[\e[m\]\[\e[33m\]\\$\[\e[m\] "
+    export PS1="${debian_chroot:+($debian_chroot)}[B] \[\e[31m\]\u\[\e[m\]\[\e[33m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]\[\e[33m\]:\[\e[m\]\[\e[36m\]\w\[\e[m\]\[\e[33m\]\\$\[\e[m\] "
     export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 else
-    export PS1="${debian_chroot:+($debian_chroot)}\[\e[35m\]\u\[\e[m\]\[\e[33m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]\[\e[33m\]:\[\e[m\]\[\e[36m\]\w\[\e[m\]\[\e[33m\]\\$\[\e[m\] "
+    export PS1="${debian_chroot:+($debian_chroot)}[B] \[\e[35m\]\u\[\e[m\]\[\e[33m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]\[\e[33m\]:\[\e[m\]\[\e[36m\]\w\[\e[m\]\[\e[33m\]\\$\[\e[m\] "
     
     # Add Git Stuff to Prompt
     GIT_PROMPT_ONLY_IN_REPO=1
-    GIT_PROMPT_START="[_LAST_COMMAND_INDICATOR_]"
+    GIT_PROMPT_START="[_LAST_COMMAND_INDICATOR_] [B]"
     GIT_PROMPT_END=" \[\e[35m\]\u\[\e[m\]\[\e[33m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]\[\e[33m\]:\[\e[m\]\[\e[36m\]\w\[\e[m\]\[\e[33m\]\\$\[\e[m\] "
     source ~/.bash-git-prompt/gitprompt.sh
     
