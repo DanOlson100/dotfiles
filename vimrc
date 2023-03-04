@@ -1,7 +1,7 @@
 "Dan's VIM Config File 
 "
 " $Id: vimrc,v 1.12 2006/09/17 02:09:09 olson Exp $
-""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""
 " Plugins                                      {{{
 "  Commands
 "    PlugInstall - Install new plug-ins
@@ -13,9 +13,10 @@ if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
     Plug 'airblade/vim-gitgutter'                       "Git Changes in Gutter
     Plug 'ap/vim-css-color'                             "CSS color highlighter
     Plug 'chrisbra/vim-diff-enhanced'                   "Use GIT diff algorithms
-    Plug 'cohama/lexima.vim', { 'on': 'AUTOClose' }     "Auto Close characters
+    Plug 'cohama/lexima.vim', { 'on': 'ToggleAutoClose'} "Auto Close characters
     Plug 'danolson100/molo'                             "Molo Color Scheme
-    Plug 'dmerejkowsky/vim-ale'                         "Auto Linter Engine
+    Plug 'dense-analysis/ale'                           "Auto Linter Engine
+    Plug 'farmergreg/vim-lastplace'                     "Let vim goto the last edit position except commit msgs.
     Plug 'frazrepo/vim-rainbow'                         "Enhanced Rainbow Parens
     Plug 'godlygeek/tabular'                            "For aligning text using :Tab /= or such
     Plug 'inkarkat/vim-mark'                            "Mark Words to Highlight
@@ -23,23 +24,26 @@ if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
     Plug 'jreybert/vimagit'                             "Some git cmds added to Vim
     Plug 'junegunn/fzf.vim'                             "FZF Vim integration with common Cmd maps
     Plug 'kshenoy/vim-signature'                        "Shows marks and move between them
-    Plug 'nathanaelkane/vim-indent-guides'              "Indent Color guides
     Plug 'neoclide/coc.nvim', { 'branch': 'release', 'on': 'ToggleCoC' }
-    "Plug 'neoclide/coc.nvim', { 'branch': 'release' }   "Code Completion
+    Plug 'preservim/nerdtree'                           "NerdTree File Browser
+    Plug 'preservim/vim-indent-guides'                  "Indent Color guides
     Plug 'rafi/awesome-vim-colorschemes'                "Collection of Vim Color Schemes
-"    Plug 'rickhowe/diffchar.vim', { 'frozen': 1 }       "Highlight only the Exact differences
     Plug 'rickhowe/diffchar.vim'                        "Highlight only the Exact differences
-    Plug 'scrooloose/nerdtree', { 'on': 'ToggleNerdTree' }
     Plug 'sheerun/vim-polyglot'                         "Collection of syntax highlights
     Plug 'tpope/vim-commentary'                         "Add/Remove Comment Characters
     Plug 'tpope/vim-eunuch'                             "Various System commands
     Plug 'tpope/vim-fugitive'                           "Git in Vim
     Plug 'tpope/vim-surround'                           "Add/Remove Surrounding anythino
     Plug 'vim-scripts/IndexedSearch'                    "Upgrade Search with status and location
+    Plug 'Xuyuanp/nerdtree-git-plugin'                  "NerdTree git status flags
     call plug#end()
 endif
+
+" DiffChar Settings
+let g:DiffUnit = 'Char'
+
 "  }}}
-""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""
 " General Options                              {{{
 filetype on                                 "Detect the type of File
 filetype plugin on                          "Load filetype plugins
@@ -67,7 +71,7 @@ endif
 set undofile                                "Use Undo files to let undo work across exist
 
 " }}} 
-""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""
 " Coloring                                     {{{
 syntax on                                         "Turn on syntax highlighting
 set background=dark                               "Try to use good colors
@@ -87,7 +91,7 @@ endif
 "colorscheme molokai
 
 " }}} 
-""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""
 " Vim UI                                       {{{
 set linespace=0                             "Space it out
 set ruler                                   "Show current position
@@ -114,7 +118,7 @@ if has("gui_running")
 endif
 
 " }}}
-""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""
 " Status Line                                  {{{
 
 " Get the git Branch w/ the Plugin vim-fugitive
@@ -151,7 +155,7 @@ set statusline+=[%6*R%5*%5l%1*,%6*C%3*%5v%1*] "Current Line and Column #
 set statusline+=[%3p%%]                       "Percent through file
 
 " }}}
-""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""
 " Visual Cues                                  {{{
 set showmatch                               "Show matching Brackets
 set matchtime=5                             "10th of seconds to blink matching brackets
@@ -162,7 +166,7 @@ set ignorecase                              "Ignore case when searching
 set smartcase                               "Use case when searching using upper case chars
 
 " }}}
-""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""
 " Text Formatting/Layout                       {{{
 set formatoptions=tcrqn                     "Format Option t=autowrap text, c=autowrap comments & auto insert after enter
                                             "q=allow formatting with qq, n=reorganize numbered list
@@ -185,7 +189,7 @@ set shiftround                              "Round indent to multiple of shiftwi
 "endtry
 
 " }}}
-""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""
 " Difference Opions                           {{{
 
 "See above in Coloring for color diff setings
@@ -200,7 +204,7 @@ else
 endif
 
 " }}}
-""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""
 " Wild Menu                                   {{{
 set wildmenu
 set wildmode=list:longest
@@ -259,7 +263,7 @@ vnoremap L g_
 inoremap jj <Esc>
 vnoremap jj <Esc>
 
-" Map vv to <Ctrl>v to use besides Past
+" Map vv to <Ctrl>v to use when terminal has Paste
 noremap vv <C-v>
 
 " Use Space to toggle folds
@@ -288,9 +292,10 @@ cnoremap <C-j> <Down>
 cnoremap <C-k> <Up>
 cnoremap <C-l> <Right>
 
-" Map J or K to Page Down/Up
-nnoremap J <PageDown>
-nnoremap K <PageUp>
+" Map Ctrl b or f to Page Down/Up
+" These are inate to vim
+"nnoremap <C-f> <PageDown>
+"nnoremap <C-b> <PageUp>
 
 " Correct Wq
 cnoreabbrev Wq wq
@@ -310,7 +315,7 @@ nnoremap <leader>sv :source $MYVIMRC<cr>
 " Map ff over word to find and replace
 nnoremap ff :%s/\<<C-r>=expand("<cword>")<CR>\>/
 
-" Move a visual selecion 
+" Move a visual selecion up/down
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
@@ -327,8 +332,8 @@ nnoremap Y y$
 " Join Lines but don't move cursor posiions
 nnoremap <leader>J moJ`o
 
-" Start FZF
-nnoremap <C-p> :FZF<CR>
+" Duplicate line at the end
+nnoremap <leader>y yypkJ
 
 " Add Undo Break Poins
 inoremap , ,<C-g>u
@@ -351,6 +356,15 @@ nnoremap <silent> cos <Cmd>set spell!<CR><Bar><Cmd>set spell?<CR>
 nnoremap <silent> cow <Cmd>set wrap!<CR><Bar><Cmd>set wrap?<CR>
 nnoremap <silent> ccl <Cmd>set cursorline!<CR><Bar><Cmd>set cursorline?<CR>
 nnoremap <silent> ccc <Cmd>set cursorcolumn!<CR><Bar><Cmd>set cursorcolumn?<CR>
+
+" Start FZF
+nnoremap <C-p> :FZF<CR>
+
+" Start/Stop Nerd Tree 
+nnoremap <C-n> :NERDTreeToggle<CR>
+
+" Toggle IndentGuides
+nnoremap <C-i> :IndentGuidesToggle<CR>
 
 " Remove augroups on reload
 augroup comments
