@@ -159,7 +159,7 @@ RPS1=""
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh && export FZF_DEFAULT_OPS="--extended"
 
 # Source Software Versions
-[ -f ~/.versions ] && source ~/.version
+[ -f ~/.version ] && source ~/.version
 
 # Add the Nala AutoComplete if it Exists
 [ -d ~/.zsh/.zfunc ] && fpath+=~/.zsh/.zfunc
