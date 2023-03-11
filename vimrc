@@ -2,6 +2,14 @@
 "
 " $Id: vimrc,v 1.12 2006/09/17 02:09:09 olson Exp $
 """""""""""""""""""""""""""""""""""""""""""""""""
+" Plugin Setup Before Loadings                {{{
+
+" ALE
+"let g:ale_completion_enabled = 1
+
+
+"}}}
+"""""""""""""""""""""""""""""""""""""""""""""""""
 " Plugins                                      {{{
 "  Commands
 "    PlugInstall - Install new plug-ins
@@ -29,18 +37,18 @@ if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
     Plug 'preservim/vim-indent-guides'                  "Indent Color guides
     Plug 'rafi/awesome-vim-colorschemes'                "Collection of Vim Color Schemes
     Plug 'rickhowe/diffchar.vim'                        "Highlight only the Exact differences
+    Plug 'roxma/nvim-yarp'                              "Dep of deoplete.nvim
+    Plug 'roxma/vim-hug-neovim-rpc'                     "Dep of deoplete.nvim
     Plug 'sheerun/vim-polyglot'                         "Collection of syntax highlights
+    Plug 'Shougo/deoplete.nvim'                         "Autocomplete Plugin
     Plug 'tpope/vim-commentary'                         "Add/Remove Comment Characters
     Plug 'tpope/vim-eunuch'                             "Various System commands
     Plug 'tpope/vim-fugitive'                           "Git in Vim
-    Plug 'tpope/vim-surround'                           "Add/Remove Surrounding anythino
+    Plug 'tpope/vim-surround'                           "Add/Remove Surrounding anything
     Plug 'vim-scripts/IndexedSearch'                    "Upgrade Search with status and location
     Plug 'Xuyuanp/nerdtree-git-plugin'                  "NerdTree git status flags
     call plug#end()
 endif
-
-" DiffChar Settings
-let g:DiffUnit = 'Char'
 
 "  }}}
 """""""""""""""""""""""""""""""""""""""""""""""""
@@ -49,11 +57,11 @@ filetype on                                 "Detect the type of File
 filetype plugin on                          "Load filetype plugins
 set history=1000                            "How may lines of History to remember
 set cf                                      "Enable error files and jumping
-set ffs=unix,dos,mac                        "Support these filesystems
+set ffs=unix,dos,mac                        "Support these file systems
 set nobackup                                "Don't Make Backup files
 set showcmd                                 "Show partial commands in the status line
-set nomodeline                              "Security protection against trojaned text files
-set title                                   "Show filename in title bar 
+set nomodeline                              "Security protection against trojan text files
+set title                                   "Show filename in title bar
 
 " If on Windows Change the ffs
 if has("gui_running")
@@ -85,12 +93,12 @@ else
 endif
 
 " Color Overrides
-"colorscheme darkblue 
-"colorscheme gruvbox 
+"colorscheme darkblue
+"colorscheme gruvbox
 "colorscheme molo
 "colorscheme molokai
 
-" }}} 
+" }}}
 """""""""""""""""""""""""""""""""""""""""""""""""
 " Vim UI                                       {{{
 set linespace=0                             "Space it out
@@ -102,7 +110,7 @@ set noerrorbells                            "Don't make noise
 set novisualbell                            "Don't Blink cursor
 set whichwrap+=<,>,h,l,[,]                  "Backspace and cursor key wrap
 set nostartofline                           "Don't jump to first char when paging
-set scrolloff=10                            "Keep cursor 10 lines from the top/bottom 
+set scrolloff=10                            "Keep cursor 10 lines from the top/bottom
 set laststatus=2                            "Always show the status line as two lines
 set ttyfast                                 "Setup redraw for faster terminals
 set lazyredraw                              "Don't redraw screen when running macros
@@ -114,6 +122,15 @@ set splitright                              "When splitting vertical put the new
 if has("gui_running")
     if has("gui_win32")
         set guifont=Consolas:h12
+    endif
+endif
+
+" Use the Clipboard for P and yy
+if has('clipboard')
+    if has('unnamedplus')
+        set clipboard^=unnamedplus,unnamed
+    else
+        set clipboard^=unnamed
     endif
 endif
 
@@ -150,7 +167,7 @@ set statusline+=%w                            "Show Preview if in Preview Window
 set statusline+=[%{&ff}]                      "File Format
 set statusline+=%y%3*                         "File Type
 set statusline+=\ %=                          "Right Align
-set statusline+=%1*[%L]                       "Total # of lines 
+set statusline+=%1*[%L]                       "Total # of lines
 set statusline+=[%6*R%5*%5l%1*,%6*C%3*%5v%1*] "Current Line and Column #
 set statusline+=[%3p%%]                       "Percent through file
 
@@ -160,7 +177,7 @@ set statusline+=[%3p%%]                       "Percent through file
 set showmatch                               "Show matching Brackets
 set matchtime=5                             "10th of seconds to blink matching brackets
 set hlsearch                                "Highlight searched phrases
-set incsearch                               "Highligh as you type searches
+set incsearch                               "Highlight as you type searches
 set showmode                                "Show vim's mode
 set ignorecase                              "Ignore case when searching
 set smartcase                               "Use case when searching using upper case chars
@@ -170,17 +187,17 @@ set smartcase                               "Use case when searching using upper
 " Text Formatting/Layout                       {{{
 set formatoptions=tcrqn                     "Format Option t=autowrap text, c=autowrap comments & auto insert after enter
                                             "q=allow formatting with qq, n=reorganize numbered list
-set smartindent                              "Turn on smart indenting
+set smartindent                             "Turn on smart indenting
 filetype plugin indent on                   "Turn on the plugin indent
 set tabstop=4                               "Number of spaces to represent a Tab
 set shiftwidth=4                            "Number of spaces to use for each step of auto-indent
 set softtabstop=4                           "Remove 4 spaces with one backspace
 set expandtab                               "Insert spaces instead of tabs
-set nowrap                                  "Don't wrap lines 
+set nowrap                                  "Don't wrap lines
 set shiftround                              "Round indent to multiple of shiftwidth
 
 "Change invisible characters: tab, end-of-line, spaces
-"try 
+"try
 "    " tab=^VU2520- ecl=^V172  trail=^V183  extends=^V187  precedes=^V171
 "    set list lcs=tab:┠-,eol:¬,trail:·,extends:»,precedes:«           "Show symbol for End of Line and Tabs
 "catch /^Vim\%((\a\+)\)\=:E474/
@@ -190,11 +207,11 @@ set shiftround                              "Round indent to multiple of shiftwi
 
 " }}}
 """""""""""""""""""""""""""""""""""""""""""""""""
-" Difference Opions                           {{{
+" Difference Options                           {{{
 
-"See above in Coloring for color diff setings
+"See above in Coloring for color diff settings
 
-" Normal Vim got xdiff lib
+" Normal Vim has xdiff lib
 if has("patch-8.1.0360")
     set diffopt+=internal,algorithm:patience
 else
@@ -242,6 +259,31 @@ let g:fzf_colors =
   \ 'marker':  ['fg', 'Keyword'],
   \ 'spinner': ['fg', 'Label'],
   \ 'header':  ['fg', 'Comment'] }
+
+" }}}
+"""""""""""""""""""""""""""""""""""""""""""""""""
+" Filetypes                                   {{{
+"  Load before Keymaps as some depend on Filetypes
+
+
+" AuGroups Removed on reload
+" Setup GitCommit Helpers
+augroup gitcommit
+    au!
+
+    " Add Helper lines for Git Commit Mesages
+    autocmd FileType gitcommit set textwidth=72     " For commit message max length
+    autocmd FileType gitcommit set colorcolumn=73   " For commit message max length reminder
+    autocmd FileType gitcommit set colorcolumn+=51  " For commit message title max length reminder
+
+augroup END
+
+
+if !empty(glob("~/.vim/filetypes.vim"))
+    source ~/.vim/filetypes.vim
+elseif !empty(glob(fzf"~/vimfiles/filetypes.vim"))
+    source ~/vimfiles/filetypes.vim
+endif
 
 " }}}
 """""""""""""""""""""""""""""""""""""""""""""""""
@@ -293,7 +335,7 @@ cnoremap <C-k> <Up>
 cnoremap <C-l> <Right>
 
 " Map Ctrl b or f to Page Down/Up
-" These are inate to vim
+" These are innate to vim
 "nnoremap <C-f> <PageDown>
 "nnoremap <C-b> <PageUp>
 
@@ -315,7 +357,7 @@ nnoremap <leader>sv :source $MYVIMRC<cr>
 " Map ff over word to find and replace
 nnoremap ff :%s/\<<C-r>=expand("<cword>")<CR>\>/
 
-" Move a visual selecion up/down
+" Move a visual selection up/down
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
@@ -335,7 +377,11 @@ nnoremap <leader>J moJ`o
 " Duplicate line at the end
 nnoremap <leader>y yypkJ
 
-" Add Undo Break Poins
+" Shortcut split and vsplit
+nnoremap <leader>s <Cmd>split<CR>
+nnoremap <leader>v <Cmd>vsplit<CR>
+
+" Add Undo Break Points
 inoremap , ,<C-g>u
 inoremap . .<C-g>u
 inoremap ! !<C-g>u
@@ -349,6 +395,13 @@ inoremap ] ]<C-g>u
 inoremap } }<C-g>u
 
 " Various Commands
+" col = Toggle list and show tab/EOL and other chars
+" con = Toggle line number display
+" cor = Toggle relative number display
+" cos = Toggle spell checking
+" cow = Toggle line wrapping
+" ccl = Toggle a diff color on the cursor row
+" ccc = Toggle a diff color on the cursor column
 nnoremap <silent> col <Cmd>set list!<CR><Bar><Cmd>set list?<CR>
 nnoremap <silent> con <Cmd>set number!<CR><Bar><Cmd>set number?<CR>
 nnoremap <silent> cor <Cmd>set relativenumber!<CR><Bar><Cmd>set relativenumber?<CR>
@@ -358,13 +411,13 @@ nnoremap <silent> ccl <Cmd>set cursorline!<CR><Bar><Cmd>set cursorline?<CR>
 nnoremap <silent> ccc <Cmd>set cursorcolumn!<CR><Bar><Cmd>set cursorcolumn?<CR>
 
 " Start FZF
-nnoremap <C-p> :FZF<CR>
+nnoremap <leader>fzf <Cmd>FZF<CR>
 
 " Start/Stop Nerd Tree 
-nnoremap <C-n> :NERDTreeToggle<CR>
+nnoremap <leader>nt <Cmd>NERDTreeToggle<CR>
 
 " Toggle IndentGuides
-nnoremap <C-i> :IndentGuidesToggle<CR>
+nnoremap <leader>ig <Cmd>IndentGuidesToggle<CR>
 
 " Remove augroups on reload
 augroup comments
@@ -376,6 +429,7 @@ augroup comments
     au FileType yaml,python           nnoremap <leader>c mogI#<ESC>`o
     au FileType c,cpp                 nnoremap <leader>c mogI//<ESC>`o
     au FileType skill                 nnoremap <leader>c mogI;<ESC>`o
+    au FileType spice                 nnoremap <leader>c mogI*<ESC>`o
 
     "Remove a comment shortcut based on filetype
     au FileType vim                   nnoremap <leader>z mo<CMD>s/"//<CR><CMD>nohlsearch<CR>`o
@@ -383,18 +437,28 @@ augroup comments
     au FileType yaml,python           nnoremap <leader>z mo<CMD>s/#//<CR><CMD>nohlsearch<CR>`o
     au FileType c,cpp                 nnoremap <leader>z mo<CMD>s/\/\///<CR><CMD>nohlsearch<CR>`o
     au FileType skill                 nnoremap <leader>z mo<CMD>s/;//<CR><CMD>nohlsearch<CR>`o
+    au FileType spice                 nnoremap <leader>z mo<CMD>s/*//<CR><CMD>nohlsearch<CR>`o
 
 augroup END
 
 " }}}
 """""""""""""""""""""""""""""""""""""""""""""""""
-" Filetypes                                   {{{
+" Setup Plugins                               {{{
 
-if !empty(glob("~/.vim/filetypes.vim"))
-    source ~/.vim/filetypes.vim
-elseif !empty(glob("~/vimfiles/fileypes.vim"))
-    source ~/vimfiles/filetypes.vim
-endif
+" DiffChar Settings
+let g:DiffUnit = 'Char'
+"let g:DiffUnit = 'Word'
+
+" Deoplete Settings
+let g:deoplete#enable_at_startup = 1 
+
+" ALE Settings
+"let g:ale_linter_explicit = 1
+"let g:ale_linters = {
+"\    'javascript': ['eslint'],
+"\    'python':     ['pylint'],
+"\}
+"let g:ale_sign_error   = '>>'
+"let g:ale_sign_warning = '--'
 
 " }}}
-
