@@ -15,6 +15,10 @@ foreach file ( `ls $localdir` )
             echo "Checking: $file"
             diff $file ~/.vim/$file
             breaksw
+        case 'init.lua':
+            echo "Checking: $file"
+            diff $file ~/.config/nvim/$file
+            breaksw
         case 'install.sh':
             breaksw
         case 'check.csh':
