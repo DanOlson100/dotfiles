@@ -7,6 +7,8 @@
 " ALE
 "let g:ale_completion_enabled = 1
 
+" Context
+let g:context_add_mappings = 0    "Dont add mappins, interferes with H
 
 "}}}
 """""""""""""""""""""""""""""""""""""""""""""""""
@@ -33,6 +35,7 @@ if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
     Plug 'junegunn/fzf.vim'                             "FZF Vim integration with common Cmd maps
     Plug 'kshenoy/vim-signature'                        "Shows marks and move between them
     Plug 'neoclide/coc.nvim', { 'branch': 'release', 'on': 'ToggleCoC' }
+    Plug 'mbbill/undotree'                              "Undo Tree Viewer
     Plug 'preservim/nerdtree'                           "NerdTree File Browser
     Plug 'preservim/vim-indent-guides'                  "Indent Color guides
     Plug 'rafi/awesome-vim-colorschemes'                "Collection of Vim Color Schemes
@@ -46,6 +49,7 @@ if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
     Plug 'tpope/vim-fugitive'                           "Git in Vim
     Plug 'tpope/vim-surround'                           "Add/Remove Surrounding anything
     Plug 'vim-scripts/IndexedSearch'                    "Upgrade Search with status and location
+    Plug 'wellle/context.vim'                           "Show only context funtion/loops/if - Similar to TreeSitter-Context for Nvim
     Plug 'Xuyuanp/nerdtree-git-plugin'                  "NerdTree git status flags
     call plug#end()
 endif
@@ -105,7 +109,6 @@ set linespace=0                             "Space it out
 set ruler                                   "Show current position
 set number                                  "Show line numbers, use cor for relative numbers
 set backspace=indent,eol,start              "Make Backspace work
-"set t_kD=                                "Fix Delete Key
 set noerrorbells                            "Don't make noise
 set novisualbell                            "Don't Blink cursor
 set whichwrap+=<,>,h,l,[,]                  "Backspace and cursor key wrap
@@ -280,9 +283,9 @@ augroup END
 
 
 if !empty(glob("~/.vim/filetypes.vim"))
-    source ~/.vim/filetypes.vim
-elseif !empty(glob(fzf"~/vimfiles/filetypes.vim"))
-    source ~/vimfiles/filetypes.vim
+    source "~/.vim/filetypes.vim"
+elseif !empty(glob("~/vimfiles/filetypes.vim"))
+    source "~/vimfiles/filetypes.vim"
 endif
 
 " }}}
@@ -293,9 +296,10 @@ endif
 let mapleader=","
 
 "Map new goto start and end keys
-noremap  H 0
-noremap  L $
-vnoremap L g_
+nnoremap  H 0
+vnoremap  H 0
+noremap   L $
+vnoremap  L g_
 
 "Map ii to <Escape>
 "inoremap ii <Esc>
@@ -333,6 +337,11 @@ cnoremap <C-h> <Left>
 cnoremap <C-j> <Down>
 cnoremap <C-k> <Up>
 cnoremap <C-l> <Right>
+
+"Buffer Commands
+":b1 - move to buffer 1
+nnoremap <leader>bn   <Cmd>bnext<Cr>
+nnoremap <leader>bp   <Cmd>bprevious<Cr>
 
 " Map Ctrl b or f to Page Down/Up
 " These are innate to vim
@@ -418,6 +427,12 @@ nnoremap <leader>nt <Cmd>NERDTreeToggle<CR>
 
 " Toggle IndentGuides
 nnoremap <leader>ig <Cmd>IndentGuidesToggle<CR>
+
+" Toggle UndoTree
+nnoremap <leader>ut <Cmd>UndoTreeToggle<CR>
+
+" Toggle Context
+nnoremap <leader>tsc <Cmd>ContextToggle<CR>
 
 " Remove augroups on reload
 augroup comments
