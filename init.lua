@@ -49,6 +49,7 @@ end
 --    Plug 'junegunn/fzf.vim'                             "FZF Vim integration with common Cmd maps
 --    Plug 'kshenoy/vim-signature'                        "Shows marks and move between them
 --    Plug 'neoclide/coc.nvim', { 'branch': 'release', 'on': 'ToggleCoC' }
+      Plug 'mbbill/undotree'                            -- Visualize Undo as a Tree
 --    Plug 'preservim/nerdtree'                           "NerdTree File Browser
 --    Plug 'preservim/vim-indent-guides'                  "Indent Color guides
 --    Plug 'rafi/awesome-vim-colorschemes'                "Collection of Vim Color Schemes
@@ -63,6 +64,13 @@ end
 --    Plug 'tpope/vim-surround'                           "Add/Remove Surrounding anything
     Plug 'vim-scripts/IndexedSearch'                    -- Upgrade Search with status and location
 --    Plug 'Xuyuanp/nerdtree-git-plugin'                  "NerdTree git status flags
+-- Nvim Only Plugins
+    Plug 'nvim-lua/plenary.nvim'                        -- Telescope Dependancy
+    Plug 'nvim-telescope/telescope.nvim'                -- Telescope Fuzzy file finder
+    Plug 'nvim-treesitter/nvim-treesitter'              -- TreeSitter file parser for Syntax and Highlighting
+    Plug 'nvim-treesitter/nvim-treesitter-context'      -- TreeSitter Context plugin
+    Plug 'nvim-treesitter/playground'                   -- Tresitter playground 
+--  Plug 'ThePrimeagen/harpoon'                         -- File shortcut plugin
     vim.call('plug#end')
 --end
 
@@ -81,7 +89,7 @@ vim.opt.title = true                          -- Show filename in title bar
 -- If on Windows Change the ffs
 if vim.fn.has("gui_running") then
     if vim.fn.has("gui_win32") then
-        vim.opt.fileformats = "dos,unix,mac"
+--        vim.opt.fileformats = "dos,unix,mac"
     end
 end
 
@@ -236,31 +244,6 @@ vim.opt.foldlevelstart = 0
 
 --}}}
 --"""""""""""""""""""""""""""""""""""""""""""""""""
--- FZF Settings                                 {{{
-
--- Add the path to FZF
---if IsDir("~/.fzf/") then
---    vim.opt.rtp:append { "~/.fzf" }
---end
-
--- Use the Vim Color Scheme
---let g:fzf_colors =
---\ { 'fg':      ['fg', 'Normal'],
---  \ 'bg':      ['bg', 'Normal'],
---  \ 'hl':      ['fg', 'Comment'],
---  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
---  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
---  \ 'hl+':     ['fg', 'Statement'],
---  \ 'info':    ['fg', 'PreProc'],
---  \ 'border':  ['fg', 'Ignore'],
---  \ 'prompt':  ['fg', 'Conditional'],
---  \ 'pointer': ['fg', 'Exception'],
---  \ 'marker':  ['fg', 'Keyword'],
---  \ 'spinner': ['fg', 'Label'],
---  \ 'header':  ['fg', 'Comment'] }
-
---}}}
---"""""""""""""""""""""""""""""""""""""""""""""""""
 -- Filetypes                                    {{{
 --  Load before Keymaps as some depend on Filetypes
 
@@ -317,6 +300,11 @@ vim.keymap.set( {"i", "c"}, "C-l>", "<Right>")
 --  These are innate to vim
 vim.keymap.set( "n", "<C-f>", "<PageDown>")
 vim.keymap.set( "n", "<C-b>", "<PageUp>")
+
+-- Buffer Commands
+-- :b1 - move to buffer 1
+vim.keymap.set( "n", "<leader>bn", "<Cmd>bnext<Cr>")
+vim.keymap.set( "n", "<leader>bp", "<Cmd>bprevious<Cr>")
 
 -- Correct Wq
 vim.cmd( "cnoreabbrev Wq wq")
@@ -398,6 +386,12 @@ vim.keymap.set( "n", "<leader>nt", "<Cmd>NERDTreeToggle<CR>")
 -- Toggle IndentGuides
 vim.keymap.set( "n", "<leader>ig", "<Cmd>IndentGuidesToggle<CR>")
 
+-- Toggle UndoTree
+vim.keymap.set( "n", "<leader>ut", "<Cmd>UndotreeToggle<CR>")
+
+-- Toggle TreeSitter-Context
+vim.keymap.set( "n", "<leader>tsc", "<Cmd>TSContextToggle<CR>")
+
 -- Add Comments with <leader>c , remove with <leader>z
 local au_id = vim.api.nvim_create_augroup("comments", {clear = true})
 vim.api.nvim_create_autocmd( "FileType", { pattern =  {"vim"},                    callback = function() vim.keymap.set("n", "<leader>c", "mogI\"<ESC>`o") end, group = "comments" } )
@@ -435,6 +429,26 @@ vim.g.DiffUnit = "Char"
 --"\}
 --vim.g.ale_sign_error   = ">>"
 --vim.g.ale_sign_warning = "--"
+
+-- Telescope Setup
+vim.keymap.set( {"n"}, "<leader>ff", "<Cmd>Telescope find_files<Cr>")
+vim.keymap.set( {"n"}, "<leader>fg", "<Cmd>Telescope live_grep<Cr>")
+vim.keymap.set( {"n"}, "<leader>fb", "<Cmd>Telescope buffers<Cr>")
+vim.keymap.set( {"n"}, "<leader>fh", "<Cmd>Telescope help_tags<Cr>")
+
+-- TreeSitter Contect Setup
+require'treesitter-context'.setup{
+    enable = false,           -- Enable this Plugin
+    max_lines = 0,            -- How many lines the window should span. Values <=0 mean no limit.
+    min_window_height = 0,    -- Minimum editory height to enable context. Values <=0 mean no limit.
+    line_numbers = true,
+    multiline_threshold = 20, -- Maximum number of lines to collapse for a single context line
+    trim_scope = 'outer',     -- Which context lines to discard if 'max_lines' is exceeded, 'inner' or 'outer'
+    mode = 'cursor',         -- Line used to calculate context, 'cursor' or 'topline'
+    separator = nil,          -- 
+    zindex = 20,              -- The Z-index of the context window
+}
+
 
 --}}}
 
