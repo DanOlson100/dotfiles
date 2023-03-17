@@ -281,11 +281,12 @@ augroup gitcommit
 
 augroup END
 
-
+" Load the Filetypes
+" Don't quote the source target
 if !empty(glob("~/.vim/filetypes.vim"))
-    source "~/.vim/filetypes.vim"
+    source ~/.vim/filetypes.vim
 elseif !empty(glob("~/vimfiles/filetypes.vim"))
-    source "~/vimfiles/filetypes.vim"
+    source ~/vimfiles/filetypes.vim
 endif
 
 " }}}
@@ -432,7 +433,7 @@ nnoremap <leader>ig <Cmd>IndentGuidesToggle<CR>
 nnoremap <leader>ut <Cmd>UndoTreeToggle<CR>
 
 " Toggle Context
-nnoremap <leader>tsc <Cmd>ContextToggle<CR>
+nnoremap <leader>ct <Cmd>ContextToggle<CR>
 
 " Remove augroups on reload
 augroup comments
