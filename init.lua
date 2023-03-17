@@ -25,22 +25,49 @@ end
 
 --}}}
 --"""""""""""""""""""""""""""""""""""""""""""""""""
- -- Plugins                                      {{{
+-- Plugins                                      {{{
 --  Commands
 --    PlugInstall - Install new plug-ins
 --    PlugUpdate  - Update installed plug-ins
 --    PlugUpgrade - Upgrade the plugged Plug-in
 --    PlugStatus  - Fetch the status of the Plug-ins
+
+local ensure_packer = function()
+  local fn = vim.fn
+  local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+  if fn.empty(fn.glob(install_path)) > 0 then
+    fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+    vim.cmd [[packadd packer.nvim]]
+    return true
+  end
+  return false
+end
+
+local packer_bootstrap = ensure_packer()
+
+return require('packer').startup(function(use)
+  use 'wbthomason/packer.nvim'
+  -- My plugins here
+  -- use 'foo1/bar1.nvim'
+  -- use 'foo2/bar2.nvim'
+
+  -- Automatically set up your configuration after cloning packer.nvim
+  -- Put this at the end after all plugins
+  if packer_bootstrap then
+    require('packer').sync()
+  end
+end)
+
 --if IsDir(HOME .. "/.config/nvim/plugged") or IsDir( HOME .. "/vimfiles/plugged") then
-    vim.call('plug#begin',HOME ..'/.config/nvim/plugged')
-    local Plug = vim.fn['plug#']
-    Plug 'airblade/vim-gitgutter'                       -- Git Changes in Gutter
+--    vim.call('plug#begin',HOME ..'/.config/nvim/plugged')
+--    local Plug = vim.fn['plug#']
+--    Plug 'airblade/vim-gitgutter'                       -- Git Changes in Gutter
 --    Plug 'ap/vim-css-color'                           -- CSS color highlighter
 --    Plug 'chrisbra/vim-diff-enhanced'                   "Use GIT diff algorithms
 --    Plug 'cohama/lexima.vim', { 'on': 'ToggleAutoClose'} "Auto Close characters
-    Plug 'danolson100/molo'                             -- Molo Color Scheme
+--    Plug 'danolson100/molo'                             -- Molo Color Scheme
 --    Plug 'dense-analysis/ale'                           "Auto Linter Engine
-    Plug 'farmergreg/vim-lastplace'                     -- Let vim goto the last edit position except commit msgs.
+--    Plug 'farmergreg/vim-lastplace'                     -- Let vim goto the last edit position except commit msgs.
 --    Plug 'frazrepo/vim-rainbow'                         "Enhanced Rainbow Parens
 --    Plug 'godlygeek/tabular'                            "For aligning text using :Tab /= or such
 --    Plug 'inkarkat/vim-mark'                            "Mark Words to Highlight
@@ -49,29 +76,30 @@ end
 --    Plug 'junegunn/fzf.vim'                             "FZF Vim integration with common Cmd maps
 --    Plug 'kshenoy/vim-signature'                        "Shows marks and move between them
 --    Plug 'neoclide/coc.nvim', { 'branch': 'release', 'on': 'ToggleCoC' }
-      Plug 'mbbill/undotree'                            -- Visualize Undo as a Tree
+--      Plug 'mbbill/undotree'                            -- Visualize Undo as a Tree
 --    Plug 'preservim/nerdtree'                           "NerdTree File Browser
 --    Plug 'preservim/vim-indent-guides'                  "Indent Color guides
 --    Plug 'rafi/awesome-vim-colorschemes'                "Collection of Vim Color Schemes
-    Plug 'rickhowe/diffchar.vim'                        -- Highlight only the Exact differences
+--    Plug 'rickhowe/diffchar.vim'                        -- Highlight only the Exact differences
 --    Plug 'roxma/nvim-yarp'                              "Dep of deoplete.nvim
 --    Plug 'roxma/vim-hug-neovim-rpc'                     "Dep of deoplete.nvim
 --    Plug 'sheerun/vim-polyglot'                         "Collection of syntax highlights
 --    Plug 'Shougo/deoplete.nvim'                         "Autocomplete Plugin
 --    Plug 'tpope/vim-commentary'                         "Add/Remove Comment Characters
 --    Plug 'tpope/vim-eunuch'                             "Various System commands
-    Plug 'tpope/vim-fugitive'                           -- Git in Vim
+--    Plug 'tpope/vim-fugitive'                           -- Git in Vim
 --    Plug 'tpope/vim-surround'                           "Add/Remove Surrounding anything
-    Plug 'vim-scripts/IndexedSearch'                    -- Upgrade Search with status and location
+--    Plug 'vim-scripts/IndexedSearch'                    -- Upgrade Search with status and location
 --    Plug 'Xuyuanp/nerdtree-git-plugin'                  "NerdTree git status flags
 -- Nvim Only Plugins
-    Plug 'nvim-lua/plenary.nvim'                        -- Telescope Dependancy
-    Plug 'nvim-telescope/telescope.nvim'                -- Telescope Fuzzy file finder
-    Plug 'nvim-treesitter/nvim-treesitter'              -- TreeSitter file parser for Syntax and Highlighting
-    Plug 'nvim-treesitter/nvim-treesitter-context'      -- TreeSitter Context plugin
-    Plug 'nvim-treesitter/playground'                   -- Tresitter playground 
+--    Plug 'nvim-lua/plenary.nvim'                        -- Telescope Dependancy
+--    Plug 'nvim-telescope/telescope.nvim'                -- Telescope Fuzzy file finder
+--    Plug 'nvim-treesitter/nvim-treesitter'              -- TreeSitter file parser for Syntax and Highlighting
+--    Plug 'nvim-treesitter/nvim-treesitter-context'      -- TreeSitter Context plugin
+--    Plug 'nvim-treesitter/playground'                   -- Tresitter playground 
+--    Plug 'p00f/nvim-ts-rainbow'                         -- Rainbow parens
 --  Plug 'ThePrimeagen/harpoon'                         -- File shortcut plugin
-    vim.call('plug#end')
+--    vim.call('plug#end')
 --end
 
 --}}}
@@ -436,19 +464,80 @@ vim.keymap.set( {"n"}, "<leader>fg", "<Cmd>Telescope live_grep<Cr>")
 vim.keymap.set( {"n"}, "<leader>fb", "<Cmd>Telescope buffers<Cr>")
 vim.keymap.set( {"n"}, "<leader>fh", "<Cmd>Telescope help_tags<Cr>")
 
--- TreeSitter Contect Setup
-require'treesitter-context'.setup{
-    enable = false,           -- Enable this Plugin
-    max_lines = 0,            -- How many lines the window should span. Values <=0 mean no limit.
-    min_window_height = 0,    -- Minimum editory height to enable context. Values <=0 mean no limit.
-    line_numbers = true,
-    multiline_threshold = 20, -- Maximum number of lines to collapse for a single context line
-    trim_scope = 'outer',     -- Which context lines to discard if 'max_lines' is exceeded, 'inner' or 'outer'
-    mode = 'cursor',         -- Line used to calculate context, 'cursor' or 'topline'
-    separator = nil,          -- 
-    zindex = 20,              -- The Z-index of the context window
-}
 
+require("user.plugins")
+-- Tree sitter Setup
+--require'nvim-treesitter.configs'.setup {
+--    -- A list of parser names, or "all" (the five listed parsers should always be installed)
+--    ensure_installed = { "c", "lua", "vim", "help", "query" },
+--
+--    -- Install parsers synchronously (only applied to `ensure_installed`)
+--    sync_install = false,
+--
+--    -- Automatically install missing parsers when entering buffer
+--    -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
+--    auto_install = true,
+--
+--    -- List of parsers to ignore installing (for "all")
+--    ignore_install = { "javascript" },
+--
+--    ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
+--    -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
+--
+--    highlight = {
+--        enable = true,
+--
+--        -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+--        -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+--        -- the name of the parser)
+--
+--        -- list of language that will be disabled
+--        disable = { "c", "rust" },
+--
+--        -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
+--        disable = function(lang, buf)
+--            local max_filesize = 100 * 1024 -- 100 KB
+--            local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+--            if ok and stats and stats.size > max_filesize then
+--                return true
+--            end
+--        end,
+--
+--        -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+--        -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+--        -- Using this option may slow down your editor, and you may see some duplicate highlights.
+--        -- Instead of true it can also be a list of languages
+--        additional_vim_regex_highlighting = true,
+--    },
+--    indent = {
+--        enable = true,
+--    },
+--
+---- Rainbow Markers Setup
+--    rainbox = {
+--        enable = true,
+--        -- disable = { "cpp" },  -- Table of lang you want disabled
+--        extended_mode = true,    -- Also highlight non-bracket delimiters like html tags, boolean or tables
+--        max_file_lines = nil,    -- Do not enable for files with more than n lines, 
+--        -- colors = {},          -- Table of hex strings
+--        -- termcolors = {}       == Table of color name strings
+--   }
+--}
+
+---- TreeSitter Context Setup
+--require'treesitter-context'.setup {
+--    enable = false,           -- Enable this Plugin
+--    max_lines = 0,            -- How many lines the window should span. Values <=0 mean no limit.
+--    min_window_height = 0,    -- Minimum editory height to enable context. Values <=0 mean no limit.
+--    line_numbers = true,
+--    multiline_threshold = 20, -- Maximum number of lines to collapse for a single context line
+--    trim_scope = 'outer',     -- Which context lines to discard if 'max_lines' is exceeded, 'inner' or 'outer'
+--    mode = 'cursor',         -- Line used to calculate context, 'cursor' or 'topline'
+--    separator = nil,          -- 
+--    zindex = 20,              -- The Z-index of the context window
+--}
+
+--}
 
 --}}}
 
