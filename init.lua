@@ -1,55 +1,122 @@
---Dan's NeoVIM Lua Config File 
+-- Dan's NeoVim Config
 --
 -- $Id: vimrc,v 1.12 2006/09/17 02:09:09 olson Exp $
 --"""""""""""""""""""""""""""""""""""""""""""""""""
--- Plugin Setup
+-- Plugin Setup                                 {{{
 local HOME=os.getenv("HOME") or ""
+
+--  Set <leader>, Must happen before plugins are loaded, otherwise wrong leader will be used
+vim.g.mapleader = ','
+vim.g.maplocalleader = ','
 
 --}}}
 --"""""""""""""""""""""""""""""""""""""""""""""""""
--- Start Neopm Plugin Manager
-Plug = require('neopm')
+-- Plugin Instalation                           {{{
 
---Vim Plugins
-Plug 'airblade/vim-gitgutter'                         -- Git Changes in Gutter
-Plug 'ap/vim-css-color'                               -- CSS color highlighter
-Plug 'chrisbra/vim-diff-enhanced'                     -- Use GIT diff algorithms
---Plug 'cohama/lexima.vim', { 'on': 'ToggleAutoClose'} -- Auto Close characters
-Plug 'danolson100/molo'                               -- Molo Color Scheme
---Plug 'farmergreg/vim-lastplace'                     -- Let vim goto the last edit position except commit msgs.
---Plug 'frazrepo/vim-rainbow'                         -- Enhanced Rainbow Parens
---Plug 'godlygeek/tabular'                            -- For aligning text using :Tab /= or such
-Plug 'inkarkat/vim-mark'                              -- Mark Words to Highlight
-Plug 'inkarkat/vim-ingo-library'                      -- Dep Lib for vim-mark
---Plug 'jreybert/vimagit'                               -- Some git cmds added to Vim
---Plug 'kshenoy/vim-signature'                          -- Shows marks and move between them
-Plug 'mbbill/undotree'                                -- Visualize Undo as a Tree
---Plug 'preservim/nerdtree'                             -- NerdTree File Browser
-Plug 'preservim/vim-indent-guides'                    -- Indent Color guides
-Plug 'rickhowe/diffchar.vim'                          -- Highlight only the Exact differences
---Plug 'sheerun/vim-polyglot'                           -- Collection of syntax highlights
---Plug 'tpope/vim-commentary'                           -- Add/Remove Comment Characters
-Plug 'tpope/vim-eunuch'                               -- Various System commands
-Plug 'tpope/vim-fugitive'                             -- Git in Vim
-Plug 'tpope/vim-surround'                             -- Add/Remove Surrounding anything
-Plug 'vim-scripts/IndexedSearch'                      -- Upgrade Search with status and location
---Plug 'Xuyuanp/nerdtree-git-plugin'                    -- NerdTree git status flags
+-- Install Lazy Plugin Manager
+local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
+if not vim.loop.fs_stat(lazypath) then
+    vim.fn.system {
+        'git',
+        'clone',
+        '--filter=blob:none',
+        'https://github.com/folke/lazy.nvim.git',
+        '--branch=stable',
+        lazypath,
+    }
+end
+vim.opt.rtp:prepend(lazypath)
 
---Neovim Plugins
-Plug 'neovim/nvim-lspconfig'                          -- LSP Config
-Plug 'nvim-lua/plenary.nvim'                          -- Telescope Dependancy
-Plug 'nvim-telescope/telescope.nvim'                  -- Telescope Fuzzy file finder
-Plug 'nvim-treesitter/nvim-treesitter'                -- TreeSitter file parser for Syntax and Highlighting
-Plug 'nvim-treesitter/nvim-treesitter-context'        -- TreeSitter Context plugin
-Plug 'nvim-treesitter/playground'                     -- Tresitter playground 
-Plug 'p00f/nvim-ts-rainbow'                           -- Rainbow parens
-Plug 'ThePrimeagen/harpoon'                           -- File shortcut plugin
-Plug 'williamboman/mason.nvim'                        -- LSP Server Manager
-Plug 'williamboman/mason-lspconfig.nvim'              -- LSP Server Manager
+-- Setup Lazy and Install Other Plugins
+require('lazy').setup({
+    -- Basic Vim Plugins
+    'airblade/vim-gitgutter',                         -- Git Changes in Gutter
+    'ap/vim-css-color',                               -- CSS color highlighter
+    'chrisbra/vim-diff-enhanced',                     -- Use GIT diff algorithms
+    'farmergreg/vim-lastplace',                       -- Let vim goto the last edit position except commit msgs.
+    'frazrepo/vim-rainbow',                           -- Enhanced Rainbow Parens
+    'godlygeek/tabular',                              -- For aligning text using :Tab /= or such
+    'inkarkat/vim-mark',                              -- Mark Words to Highlight
+    'inkarkat/vim-ingo-library',                      -- Dep Lib for vim-mark
+    'jreybert/vimagit',                               -- Some git cmds added to Vim
+    'kshenoy/vim-signature',                          -- Shows marks and move between them
+    'mbbill/undotree',                                -- Visualize Undo as a Tree
+    'preservim/vim-indent-guides',                    -- Indent Color guides
+    'rickhowe/diffchar.vim',                          -- Highlight only the Exact differences
+    'tpope/vim-eunuch',                               -- Various System commands
+    'tpope/vim-fugitive',                             -- Git in Vim
+    'tpope/vim-surround',                             -- Add/Remove Surrounding anything
+    'vim-scripts/IndexedSearch',                      -- Upgrade Search with status and location
+    'wellle/context.vim',                             -- Show only context funtion/loops/if - Similar to TreeSitter-Context for Nvim
 
-Plug.load()
+    -- NeoVim Plugins with Configs
+    { 'neovim/nvim-lspconfig',                        -- LSP Plugin
+        dependencies = {
+            'williamboman/mason.nvim',                -- LSP Installer Plugin
+            'williamboman/mason-lspconfig.nvim',      -- LSP Config Plugin
+            { 'j-hui/fidget.nvim', opts = {} },       -- UI for LSP Plugins
+            'folke/neodev.nvim',                      -- LSP Setup Plugin
+        },
+    },
 
---}}}
+    { 'hrsh7th/nvim-cmp',                             -- LSP Completion Plugin
+        dependencies = {
+	        'hrsh7th/cmp-nvim-lsp',                   -- LSP Source Plugin
+	        'L3MON4D3/LuaSnip',                       -- LSP Snip
+	        'saadparwaiz1/cmp_luasnip'                -- LSP Completion Source for Snip
+	    },
+    },
+
+    -- { 'folke/which-key.nvim', opts = {} },            -- Popup for key completion
+    { 'danolson100/molo',                             -- Personalized Color Scheme
+        priority = 1001,
+        config = function()
+            vim.cmd.colorscheme 'molo'
+        end,
+    },
+
+    -- { 'nvim-lualine/lualine.nvim',                    -- Lua Status Line
+        -- opts = {
+            -- options = {
+                -- icons_enabled = false,
+                -- theme = 'onedark',
+                -- component_separators = '|',
+                -- section_separators = '',
+            -- },
+        -- },
+    -- },
+
+    { 'lukas-reineke/indent-blankline.nvim',          -- Indent Guides
+        opts = {
+            char = '┊',
+            show_trailing_blankline_indent = false,
+        },
+    },
+
+    { 'numToStr/Comment.nvim', opts = {} },           -- Add Comments
+
+    -- Telescope Fuzzy Finder and dependencies
+    { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
+    { 'nvim-telescope/telescope-fzf-native.nvim',
+        build = 'make',
+        cond = function()
+            return vim.fn.executable 'make' == 1
+        end,
+    },
+
+    -- Tree Sitter Plugin and dependencies for language parsing
+    { 'nvim-treesitter/nvim-treesitter',
+        dependencies = {
+            'nvim-treesitter/nvim-treesitter-textobjects',
+        },
+        config = function()
+            pcall(require('nvim-treesitter.install').update { with_sync = true })
+        end,
+    },
+
+}, {})
+
+---}}}
 --"""""""""""""""""""""""""""""""""""""""""""""""""
 -- General Options                              {{{
 --vim.opt.filetype = "plugin"                         -- Load the filetype plugins
@@ -61,16 +128,9 @@ vim.opt.showcmd = true                                -- Show partial commands i
 vim.opt.modeline = false                              -- Security protection against trojan text files
 vim.opt.title = true                                  -- Show filename in title bar
 
--- If on Windows Change the ffs
-if vim.fn.has("gui_running") then
-    if vim.fn.has("gui_win32") then
---        vim.opt.fileformats = "dos,unix,mac"
-    end
-end
-
 -- Neovim uses a different format for undo files
 --  Only Neovim uses this file
-vim.opt.undodir  = HOME .. "/.config/nvim/undo-dir"
+vim.opt.undodir  = HOME .. "/.config/nvim/undo-dir"   -- Set Undo file storage location
 vim.opt.undofile = true                               -- Use Undo files to let undo work across exits
 
 --}}} 
@@ -78,20 +138,8 @@ vim.opt.undofile = true                               -- Use Undo files to let u
 -- Coloring                                     {{{
 vim.opt.syntax = "on"                                 -- Turn on syntax highlighting
 vim.opt.background = dark                             -- Try to use good colors
-
---if IsFile(HOME .. "/.config/nvim/plugged/molo/colors/molo.vim") then
---    vim.cmd("colorscheme molo")                     --Set the color scheme
---elseif IsFile(HOME .. "/vimfiles/colors/molo.vim") then
---    vim.cmd("colorscheme molo")                     --Set the color scheme for Win
---else
---    vim.cmd("colorscheme darkblue")                 --Set the color scheme
---end
-
--- Color Overrides
---vim.cmd("colorscheme darkblue")
---vim.cmd("colorscheme gruvbox")
-vim.cmd("colorscheme molo")
---vim.cmd("colorscheme molokai")
+-- NOTE: You should make sure your terminal supports this
+vim.opt.termguicolors = true                          -- Turn on True Colors if the Term support it
 
 --}}}
 --"""""""""""""""""""""""""""""""""""""""""""""""""
@@ -110,14 +158,8 @@ vim.opt.ttyfast = true                                -- Setup redraw for faster
 vim.opt.lazyredraw = true                             -- Don't redraw the screen when running macros
 vim.opt.splitbelow = true                             -- When splitting horizontal put the new window below
 vim.opt.splitright = true                             -- When splitting vertical put the new window to the right
-
--- On Windows with Layout Scaling and High Resolutions
--- Change the font to a larger one
-if vim.fn.has("gui_running") then
-    if vim.fn.has("gui_win32") then
-        vim.opt.guifont = "Consolas:h12"
-    end
-end
+vim.opt.mouse = 'a'                                   -- Enable Mouse mode
+vim.opt.completeopt = 'menuone,noselect'              -- Show completion options in a menu
 
 -- Use the Clipboard for P and yy
 if vim.fn.has('clipboard') then
@@ -135,8 +177,8 @@ end
 -- Get the git Branch w/ the Plugin vim-fugitive
 -- But only do it an specific events
 --if IsDir( HOME .. "/.config/nvim/plugged/vim-fugitive") then
-    local au_id = vim.api.nvim_create_augroup("gitstatusline", {clear = true})
-    vim.api.nvim_create_autocmd( { "BufEnter", "FocusGained", "BufWritePost" }, { pattern =  {"*"}, callback = function() vim.b.git_status = vim.fn['fugitive#Head']() end, group = "gitstatusline" } )
+    vim.api.nvim_create_augroup("gitstatusline", {clear = true})
+    vim.api.nvim_create_autocmd( { "BufEnter", "FocusGained", "BufWritePost" }, {  callback = function() vim.b.git_status = vim.fn['fugitive#Head']() end, group = "gitstatusline" } )
 --else
 --    vim.b.git_status = "" 
 --end
@@ -188,6 +230,8 @@ vim.opt.softtabstop = 4                               -- Remove 4 spaces with on
 vim.opt.expandtab = true                              -- Insert spaces instead of tabs
 vim.opt.wrap = false                                  -- Don't wrap lines
 vim.opt.shiftround = true                             -- Round indent to multiple of shiftwidth
+vim.opt.breakindent = true                            -- Indent w/ line cont characters
+
 
 --Change invisible characters: tab, end-of-line, spaces
 --vim.opt.list = true
@@ -211,6 +255,7 @@ vim.opt.wildignore:append { ".hg,.git,.svn" }              -- Ignore version con
 vim.opt.wildignore:append { "*.jpeg,*.jpg,*.bmp,*.png" }   -- Ignore version control files
 vim.opt.wildignore:append { "*.o,*.obj,*.exe,*.dll" }      -- Ignore compiled object files
 vim.opt.wildignore:append { "*.sw?" }                      -- Ignore vim swap files
+
 --}}}
 --"""""""""""""""""""""""""""""""""""""""""""""""""
 -- Folding                                      {{{
@@ -223,7 +268,7 @@ vim.opt.foldlevelstart = 0
 --  Load before Keymaps as some depend on Filetypes
 
 -- Add Helper lines for Git Commit Mesages
-local au_id = vim.api.nvim_create_augroup("gitcommit", {clear = true})
+vim.api.nvim_create_augroup("gitcommit", {clear = true})
 vim.api.nvim_create_autocmd( "FileType", { pattern =  {"gitcommit"}, callback = function() vim.opt.textwidth=72 vim.opt.colorcolumn="51,73" end, group = "gitcommit" } )
 
 --if IsFile( HOME .. "/.vim/filetypes.vim") then
@@ -231,13 +276,9 @@ vim.api.nvim_create_autocmd( "FileType", { pattern =  {"gitcommit"}, callback = 
 --elseif IsFile( HOME .. "/vimfiles/filetypes.vim") then
 --    source HOME .. "/vimfiles/filetypes.vim"
 --end
-
 --}}}
 --"""""""""""""""""""""""""""""""""""""""""""""""""
 -- Key Mappings                                 {{{
-
--- Map Leader
-vim.g.mapleader = ","
 
 -- Map new goto start and end keys
 vim.keymap.set( {"n", "v"}, "H", "0")
@@ -276,6 +317,9 @@ vim.keymap.set( {"i", "c"}, "C-l>", "<Right>")
 vim.keymap.set( "n", "<C-f>", "<PageDown>")
 vim.keymap.set( "n", "<C-b>", "<PageUp>")
 
+-- Switch Splits
+vim.keymap.set( "n", "ww", "<C-w><C-w>")
+
 -- Buffer Commands
 -- :b1 - move to buffer 1
 vim.keymap.set( "n", "<leader>bn", "<Cmd>bnext<Cr>")
@@ -287,8 +331,11 @@ vim.cmd( "cnoreabbrev Wq wq")
 -- Correct Q
 --cnoreabbrev Q q
 
--- Map ^u to Uppercase the current word
-vim.keymap.set( {"n", "i"}, "<C-u>", "<Esc>mogUiw`oa")
+-- Map Ctrl-u to Uppercase the current word
+vim.keymap.set( {"n"}, "<C-u>", "gUaw")
+
+-- Map Ctrl-l to Lowercase the current word
+vim.keymap.set( {"n"}, "<C-l>", "guaw")
 
 -- Edit my Vim file
 vim.keymap.set( "n", "<leader>ev", ":vsplit $MYVIMRC<Cr>")
@@ -307,7 +354,7 @@ vim.keymap.set( "v", "K", ":m '<-2<CR>gv=gv")
 vim.keymap.set( "n", "<leader>k", ":m .-2<CR>==")
 vim.keymap.set( "n", "<leader>j", ":m .+1<CR>==")
 
--- Clear Search Highlights with Ctrl l
+-- Clear Search highlights with Ctrl l DOESNT WORK
 vim.keymap.set( "n", "<silent> <C-l>", "<Cmd>nohlsearch<CR><C-l>")
 
 -- Yank from cursor to end of line excluding \n
@@ -336,7 +383,8 @@ vim.keymap.set( "i", ")", ")<C-g>u")
 vim.keymap.set( "i", "]", "]<C-g>u")
 vim.keymap.set( "i", "}", "}<C-g>u")
 
--- Various Commands (Don't Work)
+-- TODO DOESN"T WORK
+-- Various Commands
 --   col = Toggle list and show tab/EOL and other chars
 --   con = Toggle line number display
 --   cor = Toggle relative number display
@@ -352,12 +400,6 @@ vim.keymap.set( "n", "<silent>cow", "<Cmd>set wrap!<CR><Bar><Cmd>set wrap?<CR>")
 vim.keymap.set( "n", "<silent>ccl", "<Cmd>set cursorline!<CR><Bar><Cmd>set cursorline?<CR>")
 vim.keymap.set( "n", "<silent>ccc", "<Cmd>set cursorcolumn!<CR><Bar><Cmd>set cursorcolumn?<CR>")
 
--- Start FZF
-vim.keymap.set( "n", "<leader>fzf", "<Cmd>FZF<CR>")
-
--- Start/Stop Nerd Tree 
-vim.keymap.set( "n", "<leader>nt", "<Cmd>NERDTreeToggle<CR>")
-
 -- Toggle IndentGuides
 vim.keymap.set( "n", "<leader>ig", "<Cmd>IndentGuidesToggle<CR>")
 
@@ -365,10 +407,10 @@ vim.keymap.set( "n", "<leader>ig", "<Cmd>IndentGuidesToggle<CR>")
 vim.keymap.set( "n", "<leader>ut", "<Cmd>UndotreeToggle<CR>")
 
 -- Toggle TreeSitter-Context
-vim.keymap.set( "n", "<leader>tsc", "<Cmd>TSContextToggle<CR>")
+vim.keymap.set( "n", "<leader>ct", "<Cmd>TSContextToggle<CR>")
 
 -- Add Comments with <leader>c , remove with <leader>z
-local au_id = vim.api.nvim_create_augroup("comments", {clear = true})
+vim.api.nvim_create_augroup("comments",  {clear = true})
 vim.api.nvim_create_autocmd( "FileType", { pattern =  {"vim"},                    callback = function() vim.keymap.set("n", "<leader>c", "mogI\"<ESC>`o") end, group = "comments" } )
 vim.api.nvim_create_autocmd( "FileType", { pattern =  {"lua"},                    callback = function() vim.keymap.set("n", "<leader>c", "mogI--<ESC>`o") end, group = "comments" } )
 vim.api.nvim_create_autocmd( "FileType", { pattern =  {"sh","bash","csh","perl"}, callback = function() vim.keymap.set("n", "<leader>c", "mogI#<ESC>`o")  end, group = "comments" } )
@@ -393,91 +435,229 @@ vim.api.nvim_create_autocmd( "FileType", { pattern =  {"spice"},                
 vim.g.DiffUnit = "Char"
 --vim.g.DiffUnit = "Word"
 
--- Telescope Setup
-vim.keymap.set( {"n"}, "<leader>ff", "<Cmd>Telescope find_files<Cr>")
-vim.keymap.set( {"n"}, "<leader>fg", "<Cmd>Telescope live_grep<Cr>")
-vim.keymap.set( {"n"}, "<leader>fb", "<Cmd>Telescope buffers<Cr>")
-vim.keymap.set( {"n"}, "<leader>fh", "<Cmd>Telescope help_tags<Cr>")
+-- Configure Telescope
+require('telescope').setup {
+    defaults = {
+        mappings = {
+            i = {
+                ['<C-u>'] = false,
+                ['<C-d>'] = false,
+            },
+        },
+    },
+}
 
--- Tree sitter Setup
-require'nvim-treesitter.configs'.setup {
-    -- A list of parser names, or "all" (the five listed parsers should always be installed)
-    ensure_installed = { "c", "lua", "vim", "help", "query" },
+-- Enable telescope fzf native, if installed
+pcall(require('telescope').load_extension, 'fzf')
 
-    -- Install parsers synchronously (only applied to `ensure_installed`)
-    sync_install = false,
+-- Setup Keymaps for Telescope
+vim.keymap.set('n', '<leader>sf',      require('telescope.builtin').find_files,  { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>sh',      require('telescope.builtin').help_tags,   { desc = '[S]earch [H]elp' })
+vim.keymap.set('n', '<leader>sw',      require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
+vim.keymap.set('n', '<leader>sg',      require('telescope.builtin').live_grep,   { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>sd',      require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>?',       require('telescope.builtin').oldfiles,    { desc = '[?] Find recently opened files' })
+vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers,     { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader>/', function()
+    require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+        winblend = 10,
+        previewer = false,
+    })
+end, { desc = '[/] Fuzzily search in current buffer' })
 
-    -- Automatically install missing parsers when entering buffer
-    -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-    auto_install = true,
+-- Configure Treesitter
+require('nvim-treesitter.configs').setup {
+    -- Add languages to be installed here that you want installed for treesitter
+    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim' },
 
-    -- List of parsers to ignore installing (for "all")
-    ignore_install = { "javascript" },
+    -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
+    auto_install = false,
 
-    ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
-    -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
-
-    highlight = {
+    highlight = { enable = true },
+    indent = { enable = true, disable = { 'python' } },
+    incremental_selection = {
         enable = true,
+            keymaps = {
+            init_selection = '<c-space>',
+            node_incremental = '<c-space>',
+            scope_incremental = '<c-s>',
+            node_decremental = '<M-space>',
+        },
+    },
+    textobjects = {
+        select = {
+            enable = true,
+            lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+            keymaps = {
+                -- You can use the capture groups defined in textobjects.scm
+                ['aa'] = '@parameter.outer',
+                ['ia'] = '@parameter.inner',
+                ['af'] = '@function.outer',
+                ['if'] = '@function.inner',
+                ['ac'] = '@class.outer',
+                ['ic'] = '@class.inner',
+            },
+        },
+        move = {
+            enable = true,
+            set_jumps = true, -- whether to set jumps in the jumplist
+            goto_next_start = {
+                [']m'] = '@function.outer',
+                [']]'] = '@class.outer',
+            },
+            goto_next_end = {
+                [']M'] = '@function.outer',
+                [']['] = '@class.outer',
+            },
+            goto_previous_start = {
+                ['[m'] = '@function.outer',
+                ['[['] = '@class.outer',
+            },
+            goto_previous_end = {
+                ['[M'] = '@function.outer',
+                ['[]'] = '@class.outer',
+            },
+        },
+        swap = {
+            enable = true,
+            swap_next = {
+                ['<leader>a'] = '@parameter.inner',
+            },
+            swap_previous = {
+                ['<leader>A'] = '@parameter.inner',
+            },
+        },
+    },
+}
 
-        -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-        -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-        -- the name of the parser)
+-- Diagnostic keymaps
+vim.keymap.set('n', '[d',        vim.diagnostic.goto_prev,  { desc = "Go to previous diagnostic message" })
+vim.keymap.set('n', ']d',        vim.diagnostic.goto_next,  { desc = "Go to next diagnostic message" })
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
-        -- list of language that will be disabled
-        disable = { "c", "rust" },
+-- Setup the LSP
+local on_attach = function(_, bufnr)
+    local nmap = function(keys, func, desc)
+        if desc then
+            desc = 'LSP: ' .. desc
+        end
+        vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+    end
 
-        -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
-        disable = function(lang, buf)
-            local max_filesize = 100 * 1024 -- 100 KB
-            local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-            if ok and stats and stats.size > max_filesize then
-                return true
-            end
+    nmap('<leader>rn', vim.lsp.buf.rename,                                         '[R]e[n]ame')
+    nmap('<leader>ca', vim.lsp.buf.code_action,                                    '[C]ode [A]ction')
+    nmap('gd',         vim.lsp.buf.definition,                                     '[G]oto [D]efinition')
+    nmap('gr',         require('telescope.builtin').lsp_references,                '[G]oto [R]eferences')
+    nmap('gI',         vim.lsp.buf.implementation,                                 '[G]oto [I]mplementation')
+    nmap('<leader>D',  vim.lsp.buf.type_definition,                                'Type [D]efinition')
+    nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols,          '[D]ocument [S]ymbols')
+    nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+    nmap('K',          vim.lsp.buf.hover,                                          'Hover Documentation')
+    nmap('<C-k>',      vim.lsp.buf.signature_help,                                 'Signature Documentation')
+    nmap('gD',         vim.lsp.buf.declaration,                                    '[G]oto [D]eclaration')
+    nmap('<leader>wa', vim.lsp.buf.add_workspace_folder,                           '[W]orkspace [A]dd Folder')
+    nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder,                        '[W]orkspace [R]emove Folder')
+    nmap('<leader>wl', function()
+        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, '[W]orkspace [L]ist Folders')
+
+    -- Create a command `:Format` local to the LSP buffer
+    vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
+        vim.lsp.buf.format()
+    end, { desc = 'Format current buffer with LSP' })
+end
+
+-- Enable the following language servers
+local servers = {
+    -- clangd = {},
+    -- gopls = {},
+    -- pyright = {},
+    -- rust_analyzer = {},
+    -- tsserver = {},
+
+    lua_ls = {
+        Lua = {
+            workspace = { checkThirdParty = false },
+            telemetry = { enable = false },
+        },
+    },
+}
+
+-- Setup Neovim Lua Configuration
+require('neodev').setup()
+
+-- nvim-cmp supports additional completion capabilities, so broadcast that to servers
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+-- Setup mason so it can manage external tooling
+require('mason').setup()
+
+-- Ensure the servers above are installed
+local mason_lspconfig = require 'mason-lspconfig'
+
+mason_lspconfig.setup {
+    ensure_installed = vim.tbl_keys(servers),
+}
+
+mason_lspconfig.setup_handlers {
+    function(server_name)
+        require('lspconfig')[server_name].setup {
+            capabilities = capabilities,
+            on_attach = on_attach,
+            settings = servers[server_name],
+        }
+    end,
+}
+
+-- nvim-cmp setup
+local cmp = require 'cmp'
+local luasnip = require 'luasnip'
+
+luasnip.config.setup {}
+
+cmp.setup {
+    snippet = {
+        expand = function(args)
+            luasnip.lsp_expand(args.body)
         end,
-
-        -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-        -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-        -- Using this option may slow down your editor, and you may see some duplicate highlights.
-        -- Instead of true it can also be a list of languages
-        additional_vim_regex_highlighting = true,
     },
-    indent = {
-        enable = true,
+    mapping = cmp.mapping.preset.insert {
+        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        ['<C-Space>'] = cmp.mapping.complete {},
+        ['<CR>'] = cmp.mapping.confirm {
+            behavior = cmp.ConfirmBehavior.Replace,
+            select = true,
+        },
+        ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
+        ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
     },
-
-    -- Rainbow Markers Setup
-    rainbox = {
-        enable = true,
-        -- disable = { "cpp" },  -- Table of lang you want disabled
-        extended_mode = true,    -- Also highlight non-bracket delimiters like html tags, boolean or tables
-        max_file_lines = nil,    -- Do not enable for files with more than n lines, 
-        -- colors = {},          -- Table of hex strings
-        -- termcolors = {}       == Table of color name strings
-   }
+    sources = {
+        { name = 'nvim_lsp' },
+        { name = 'luasnip' },
+    },
 }
 
--- TreeSitter Context Setup
-require'treesitter-context'.setup {
-    enable = True,            -- Enable this Plugin
-    max_lines = 0,            -- How many lines the window should span. Values <=0 mean no limit.
-    min_window_height = 0,    -- Minimum editory height to enable context. Values <=0 mean no limit.
-    line_numbers = true,
-    multiline_threshold = 20, -- Maximum number of lines to collapse for a single context line
-    trim_scope = 'outer',     -- Which context lines to discard if 'max_lines' is exceeded, 'inner' or 'outer'
-    mode = 'cursor',         -- Line used to calculate context, 'cursor' or 'topline'
-    separator = nil,          -- 
-    zindex = 20,              -- The Z-index of the context window
-}
-
--- Start Mason Plugin
-require("mason").setup()
-
--- Start the LSP
-local mason_lspconfig = require("mason-lspconfig")
-
-
-
+-- Set the Color Scheme one more Time
+vim.cmd.colorscheme 'molo'
 
 --}}}
 
