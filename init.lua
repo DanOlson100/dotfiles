@@ -5,7 +5,6 @@
 -- Plugin Setup
 local HOME=os.getenv("HOME") or ""
 
-
 --}}}
 --"""""""""""""""""""""""""""""""""""""""""""""""""
 -- Start Neopm Plugin Manager
@@ -37,6 +36,7 @@ Plug 'vim-scripts/IndexedSearch'                      -- Upgrade Search with sta
 --Plug 'Xuyuanp/nerdtree-git-plugin'                    -- NerdTree git status flags
 
 --Neovim Plugins
+Plug 'neovim/nvim-lspconfig'                          -- LSP Config
 Plug 'nvim-lua/plenary.nvim'                          -- Telescope Dependancy
 Plug 'nvim-telescope/telescope.nvim'                  -- Telescope Fuzzy file finder
 Plug 'nvim-treesitter/nvim-treesitter'                -- TreeSitter file parser for Syntax and Highlighting
@@ -44,6 +44,8 @@ Plug 'nvim-treesitter/nvim-treesitter-context'        -- TreeSitter Context plug
 Plug 'nvim-treesitter/playground'                     -- Tresitter playground 
 Plug 'p00f/nvim-ts-rainbow'                           -- Rainbow parens
 Plug 'ThePrimeagen/harpoon'                           -- File shortcut plugin
+Plug 'williamboman/mason.nvim'                        -- LSP Server Manager
+Plug 'williamboman/mason-lspconfig.nvim'              -- LSP Server Manager
 
 Plug.load()
 
@@ -467,6 +469,14 @@ require'treesitter-context'.setup {
     separator = nil,          -- 
     zindex = 20,              -- The Z-index of the context window
 }
+
+-- Start Mason Plugin
+require("mason").setup()
+
+-- Start the LSP
+local mason_lspconfig = require("mason-lspconfig")
+
+
 
 
 --}}}
