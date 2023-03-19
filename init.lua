@@ -36,8 +36,6 @@ require('lazy').setup({
     'farmergreg/vim-lastplace',                       -- Let vim goto the last edit position except commit msgs.
     'frazrepo/vim-rainbow',                           -- Enhanced Rainbow Parens
     'godlygeek/tabular',                              -- For aligning text using :Tab /= or such
-    'inkarkat/vim-mark',                              -- Mark Words to Highlight
-    'inkarkat/vim-ingo-library',                      -- Dep Lib for vim-mark
     'jreybert/vimagit',                               -- Some git cmds added to Vim
     'kshenoy/vim-signature',                          -- Shows marks and move between them
     'mbbill/undotree',                                -- Visualize Undo as a Tree
@@ -73,6 +71,13 @@ require('lazy').setup({
         config = function()
             vim.cmd.colorscheme 'molo'
         end,
+    },
+
+    { 'inkarkat/vim-mark',                              -- Mark Words to Highlight
+        priority = 999,                                 -- Needed for * 
+        dependencies = {
+            'inkarkat/vim-ingo-library',                      -- Dep Lib for vim-mark
+        },
     },
 
     -- { 'nvim-lualine/lualine.nvim',                    -- Lua Status Line
