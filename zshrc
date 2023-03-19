@@ -106,7 +106,7 @@ bindkey '^e' edit-command-line
 zstyle :compinstall filename '~/.zshrc'
 
 # Set user PATH if it exists
-[ -d ~/bin ] && PATH=$PATH:~/bin
+[ -d ~/bin ] && PATH=~/bin:$PATH
 
 # Setup the Aliases
 [ -f ~/.aliases ] && source ~/.aliases

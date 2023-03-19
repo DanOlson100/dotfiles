@@ -26,6 +26,7 @@ if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
     Plug 'cohama/lexima.vim', { 'on': 'ToggleAutoClose'} "Auto Close characters
     Plug 'danolson100/molo'                             "Molo Color Scheme
     Plug 'dense-analysis/ale'                           "Auto Linter Engine
+    Plug 'deoplete-plugins/deoplete-jedi'               "Python Deoplete LSP
     Plug 'farmergreg/vim-lastplace'                     "Let vim goto the last edit position except commit msgs.
     Plug 'frazrepo/vim-rainbow'                         "Enhanced Rainbow Parens
     Plug 'godlygeek/tabular'                            "For aligning text using :Tab /= or such
