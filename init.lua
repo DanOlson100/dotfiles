@@ -119,6 +119,11 @@ require('lazy').setup({
         end,
     },
 
+    -- Harpoon Project Navigation  
+    { 'ThePrimeagen/harpoon',
+        dependencies = { 'nvim-lua/plenary.nvim' },
+    },
+
 }, {})
 
 ---}}}
@@ -290,10 +295,10 @@ vim.keymap.set( {"n", "v"}, "H", "0")
 vim.keymap.set( {"n", "v"}, "L", "$")
 
 -- Map ii to <Escape>
-vim.keymap.set( {"i", "v"}, "ii", "<Esc>")
+vim.keymap.set( {"n", "i", "v"}, "ii", "<Esc>")
 
 -- Map jj to <Escape>
-vim.keymap.set( {"i", "v"}, "jj", "<Esc>")
+vim.keymap.set( {"n", "i", "v"}, "jj", "<Esc>")
 
 -- Map vv to <Ctrl>v to use when terminal has Paste
 vim.keymap.set("n", "vv", "<C-v>")
@@ -359,8 +364,8 @@ vim.keymap.set( "v", "K", ":m '<-2<CR>gv=gv")
 vim.keymap.set( "n", "<leader>k", ":m .-2<CR>==")
 vim.keymap.set( "n", "<leader>j", ":m .+1<CR>==")
 
--- Clear Search highlights with Ctrl l DOESNT WORK
-vim.keymap.set( "n", "<silent> <C-l>", "<Cmd>nohlsearch<CR><C-l>")
+-- Clear Search highlights with Ctrl s
+vim.keymap.set( "n", "<C-s>", function() vim.cmd("noh") end )
 
 -- Yank from cursor to end of line excluding \n
 vim.keymap.set( "n", "Y", "y$")
@@ -388,8 +393,8 @@ vim.keymap.set( "i", ")", ")<C-g>u")
 vim.keymap.set( "i", "]", "]<C-g>u")
 vim.keymap.set( "i", "}", "}<C-g>u")
 
--- TODO DOESN"T WORK
 -- Various Commands
+--   Neovim doesn't have <silent>
 --   col = Toggle list and show tab/EOL and other chars
 --   con = Toggle line number display
 --   cor = Toggle relative number display
@@ -397,13 +402,13 @@ vim.keymap.set( "i", "}", "}<C-g>u")
 --   cow = Toggle line wrapping
 --   ccl = Toggle a diff color on the cursor row
 --   ccc = Toggle a diff color on the cursor column
-vim.keymap.set( "n", "<silent>col", "<Cmd>set list!<CR><Bar><Cmd>set list?<CR>")
-vim.keymap.set( "n", "<silent>con", "<Cmd>set number!<CR><Bar><Cmd>set number?<CR>")
-vim.keymap.set( "n", "<silent>cor", "<Cmd>set relativenumber!<CR><Bar><Cmd>set relativenumber?<CR>")
-vim.keymap.set( "n", "<silent>cos", "<Cmd>set spell!<CR><Bar><Cmd>set spell?<CR>")
-vim.keymap.set( "n", "<silent>cow", "<Cmd>set wrap!<CR><Bar><Cmd>set wrap?<CR>")
-vim.keymap.set( "n", "<silent>ccl", "<Cmd>set cursorline!<CR><Bar><Cmd>set cursorline?<CR>")
-vim.keymap.set( "n", "<silent>ccc", "<Cmd>set cursorcolumn!<CR><Bar><Cmd>set cursorcolumn?<CR>")
+vim.keymap.set( "n", "col", function() vim.cmd("set list!") end )
+vim.keymap.set( "n", "con", function() vim.cmd("set number!") end )
+vim.keymap.set( "n", "cor", function() vim.cmd("set relativenumber!") end )
+vim.keymap.set( "n", "cos", function() vim.cmd("set spell!") end )
+vim.keymap.set( "n", "cow", function() vim.cmd("set wrap!") end )
+vim.keymap.set( "n", "ccl", function() vim.cmd("set cursorline!") end )
+vim.keymap.set( "n", "ccc", function() vim.cmd("set cursorcolumn!") end )
 
 -- Toggle IndentGuides
 vim.keymap.set( "n", "<leader>ig", "<Cmd>IndentGuidesToggle<CR>")
@@ -414,8 +419,14 @@ vim.keymap.set( "n", "<leader>ut", "<Cmd>UndotreeToggle<CR>")
 -- Toggle TreeSitter-Context
 vim.keymap.set( "n", "<leader>ct", "<Cmd>TSContextToggle<CR>")
 
+-- Harpoon Keybindings
+vim.keymap.set( "n", "<leader>mf", function() require('harpoon.mark').add_file() end,         { desc = 'Harpoon Add File'} )
+vim.keymap.set( "n", "<leader>ff", function() require('harpoon.ui').toggle_quick_menu() end,  { desc = 'Harpoon Menu'} )
+vim.keymap.set( "n", "<leader>nf", function() require('harpoon.ui').nav_next() end,           { desc = 'Harpoon Next File'} )
+vim.keymap.set( "n", "<leader>pf", function() require('harpoon.ui').nav_prev() end,           { desc = 'Harpoon Prev File'} )
+
 -- Add Comments with <leader>c , remove with <leader>z
-vim.api.nvim_create_augroup("comments",  {clear = true})
+vim.api.nvim_create_augroup( "comments", { clear = true})
 vim.api.nvim_create_autocmd( "FileType", { pattern =  {"vim"},                    callback = function() vim.keymap.set("n", "<leader>c", "mogI\"<ESC>`o") end, group = "comments" } )
 vim.api.nvim_create_autocmd( "FileType", { pattern =  {"lua"},                    callback = function() vim.keymap.set("n", "<leader>c", "mogI--<ESC>`o") end, group = "comments" } )
 vim.api.nvim_create_autocmd( "FileType", { pattern =  {"sh","bash","csh","perl"}, callback = function() vim.keymap.set("n", "<leader>c", "mogI#<ESC>`o")  end, group = "comments" } )
@@ -661,7 +672,21 @@ cmp.setup {
     },
 }
 
+-- Setup Harpoon
+require("harpoon").setup {
+    global_settings = {
+        save_on_toggle = false,
+        save_on_change = true,
+        enter_on_sendcmd = false,
+        tmux_autoclose_windows = false,
+        excluded_filetypes = { "harpoon" },
+        mark_branch = false,
+    },
+}
+
 -- Set the Color Scheme one more Time
+-- as some Plugin is overwritting the
+-- colors...
 vim.cmd.colorscheme 'molo'
 
 --}}}
