@@ -89,10 +89,8 @@ set undofile                                "Use Undo files to let undo work acr
 syntax on                                         "Turn on syntax highlighting
 set background=dark                               "Try to use good colors
 
-if !empty(glob("~/.vim/plugged/molo/colors/molo.vim"))
+if (g:loaded_molo == 1 )
     colorscheme molo                              "Set the color scheme
-elseif !empty(glob("~/vimfiles/colors/molo.vim"))
-    colorscheme molo                              "Set the color scheme for Win
 else
     colorscheme darkblue                          "Set the color scheme
 endif
@@ -144,7 +142,7 @@ endif
 
 " Get the git Branch w/ the Plugin vim-fugitive
 " But only do it an specific events
-if !empty(glob("~/.vim/plugged/vim-fugitive/"))
+if (g:loaded_fugitive == 1)
     augroup gitstatusline
         au!
         autocmd BufEnter,FocusGained,BufWritePost *  let b:git_status = fugitive#Head()
@@ -304,15 +302,18 @@ noremap   L $
 vnoremap  L g_
 
 "Map ii to <Escape>
-"inoremap ii <Esc>
-"vnoremap ii <Esc>
+inoremap ii <Esc>
+vnoremap ii <Esc>
 
 "Map jj to <Escape>
-inoremap jj <Esc>
-vnoremap jj <Esc>
+"inoremap jj <Esc>
+"vnoremap jj <Esc>
 
 " Map vv to <Ctrl>v to use when terminal has Paste
 noremap vv <C-v>
+
+" Map ww to Ctrl-w Ctrl-w
+norempa ww <C-w><C-w>
 
 " Use Space to toggle folds
 nnoremap <Space> za
@@ -443,7 +444,7 @@ augroup comments
     "Add a comment shortcut based on filetype
     au FileType vim                   nnoremap <leader>c mogI"<ESC>`o
     au FileType sh,bash,csh,perl      nnoremap <leader>c mogI#<ESC>`o
-    au FileType yaml,python           nnoremap <leader>c mogI#<ESC>`o
+    au FileType yaml,python,conf      nnoremap <leader>c mogI#<ESC>`o
     au FileType c,cpp                 nnoremap <leader>c mogI//<ESC>`o
     au FileType skill                 nnoremap <leader>c mogI;<ESC>`o
     au FileType spice                 nnoremap <leader>c mogI*<ESC>`o
@@ -451,7 +452,7 @@ augroup comments
     "Remove a comment shortcut based on filetype
     au FileType vim                   nnoremap <leader>z mo<CMD>s/"//<CR><CMD>nohlsearch<CR>`o
     au FileType sh,bash,csh,perl      nnoremap <leader>z mo<CMD>s/#//<CR><CMD>nohlsearch<CR>`o
-    au FileType yaml,python           nnoremap <leader>z mo<CMD>s/#//<CR><CMD>nohlsearch<CR>`o
+    au FileType yaml,python,conf      nnoremap <leader>z mo<CMD>s/#//<CR><CMD>nohlsearch<CR>`o
     au FileType c,cpp                 nnoremap <leader>z mo<CMD>s/\/\///<CR><CMD>nohlsearch<CR>`o
     au FileType skill                 nnoremap <leader>z mo<CMD>s/;//<CR><CMD>nohlsearch<CR>`o
     au FileType spice                 nnoremap <leader>z mo<CMD>s/*//<CR><CMD>nohlsearch<CR>`o
