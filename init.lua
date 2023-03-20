@@ -9,6 +9,10 @@ local HOME=os.getenv("HOME") or ""
 vim.g.mapleader = ','
 vim.g.maplocalleader = ','
 
+-- Diable NetRW for Nvim-Tree
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 --}}}
 --"""""""""""""""""""""""""""""""""""""""""""""""""
 -- Plugin Instalation                           {{{
@@ -80,25 +84,14 @@ require('lazy').setup({
         },
     },
 
-    -- { 'nvim-lualine/lualine.nvim',                    -- Lua Status Line
-        -- opts = {
-            -- options = {
-                -- icons_enabled = false,
-                -- theme = 'onedark',
-                -- component_separators = '|',
-                -- section_separators = '',
-            -- },
-        -- },
-    -- },
+--    { 'lukas-reineke/indent-blankline.nvim',          -- Indent Guides
+--        opts = {
+--            char = '┊',
+--            show_trailing_blankline_indent = false,
+--        },
+--    },
 
-    { 'lukas-reineke/indent-blankline.nvim',          -- Indent Guides
-        opts = {
-            char = '┊',
-            show_trailing_blankline_indent = false,
-        },
-    },
-
-    { 'numToStr/Comment.nvim', opts = {} },           -- Add Comments
+    { 'nvim-tree/nvim-tree.lua' },                    -- NVim Directory Browser
 
     -- Telescope Fuzzy Finder and dependencies
     { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
@@ -124,7 +117,11 @@ require('lazy').setup({
         dependencies = { 'nvim-lua/plenary.nvim' },
     },
 
-}, {})
+}, {
+    install = {
+        missing = false,
+    },
+})
 
 ---}}}
 --"""""""""""""""""""""""""""""""""""""""""""""""""
@@ -186,12 +183,11 @@ end
 --
 -- Get the git Branch w/ the Plugin vim-fugitive
 -- But only do it an specific events
---if IsDir( HOME .. "/.config/nvim/plugged/vim-fugitive") then
+vim.b.git_status = ""
+if ( vim.g.loaded_fugitive) then
     vim.api.nvim_create_augroup("gitstatusline", {clear = true})
     vim.api.nvim_create_autocmd( { "BufEnter", "FocusGained", "BufWritePost" }, {  callback = function() vim.b.git_status = vim.fn['fugitive#Head']() end, group = "gitstatusline" } )
---else
---    vim.b.git_status = "" 
---end
+end
 
 -- These are also defined in the Molo Color Scheme
 vim.cmd("hi User1 ctermbg=black  ctermfg=red        guibg=black  guifg=red")
@@ -298,7 +294,7 @@ vim.keymap.set( {"n", "v"}, "L", "$")
 vim.keymap.set( {"n", "i", "v"}, "ii", "<Esc>")
 
 -- Map jj to <Escape>
-vim.keymap.set( {"n", "i", "v"}, "jj", "<Esc>")
+--vim.keymap.set( {"n", "i", "v"}, "jj", "<Esc>")
 
 -- Map vv to <Ctrl>v to use when terminal has Paste
 vim.keymap.set("n", "vv", "<C-v>")
@@ -416,8 +412,11 @@ vim.keymap.set( "n", "<leader>ig", "<Cmd>IndentGuidesToggle<CR>")
 -- Toggle UndoTree
 vim.keymap.set( "n", "<leader>ut", "<Cmd>UndotreeToggle<CR>")
 
--- Toggle TreeSitter-Context
-vim.keymap.set( "n", "<leader>ct", "<Cmd>TSContextToggle<CR>")
+-- Toggle NvimTree
+vim.keymap.set( "n", "<leader>nt", "<Cmd>NvimTreeToggle<CR>")
+
+-- Toggle Context
+vim.keymap.set( "n", "<leader>ct", "<Cmd>ContextToggle<CR>")
 
 -- Harpoon Keybindings
 vim.keymap.set( "n", "<leader>mf", function() require('harpoon.mark').add_file() end,         { desc = 'Harpoon Add File'} )
@@ -427,21 +426,21 @@ vim.keymap.set( "n", "<leader>pf", function() require('harpoon.ui').nav_prev() e
 
 -- Add Comments with <leader>c , remove with <leader>z
 vim.api.nvim_create_augroup( "comments", { clear = true})
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"vim"},                    callback = function() vim.keymap.set("n", "<leader>c", "mogI\"<ESC>`o") end, group = "comments" } )
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"lua"},                    callback = function() vim.keymap.set("n", "<leader>c", "mogI--<ESC>`o") end, group = "comments" } )
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"sh","bash","csh","perl"}, callback = function() vim.keymap.set("n", "<leader>c", "mogI#<ESC>`o")  end, group = "comments" } )
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"yaml","python"},          callback = function() vim.keymap.set("n", "<leader>c", "mogI#<ESC>`o")  end, group = "comments" } )
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"cpp","c"},                callback = function() vim.keymap.set("n", "<leader>c", "mogI//<ESC>`o") end, group = "comments" } )
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"skill"},                  callback = function() vim.keymap.set("n", "<leader>c", "mogI;<ESC>`o")  end, group = "comments" } )
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"spice"},                  callback = function() vim.keymap.set("n", "<leader>c", "mogI*<ESC>`o")  end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"vim"},                    callback = function() vim.keymap.set("n", "<leader>c", "mogI\"<ESC>`odmo") end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"lua"},                    callback = function() vim.keymap.set("n", "<leader>c", "mogI--<ESC>`odmo") end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"sh","bash","csh","perl"}, callback = function() vim.keymap.set("n", "<leader>c", "mogI#<ESC>`odmo")  end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"yaml","python", "conf"},  callback = function() vim.keymap.set("n", "<leader>c", "mogI#<ESC>`odmo")  end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"cpp","c"},                callback = function() vim.keymap.set("n", "<leader>c", "mogI//<ESC>`odmo") end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"skill"},                  callback = function() vim.keymap.set("n", "<leader>c", "mogI;<ESC>`odmo")  end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"spice"},                  callback = function() vim.keymap.set("n", "<leader>c", "mogI*<ESC>`odmo")  end, group = "comments" } )
 
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"vim"},                    callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/"//<CR><CMD>nohlsearch<CR>`o')   end, group = "comments" } )
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"lua"},                    callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/--//<CR><CMD>nohlsearch<CR>`o')   end, group = "comments" } )
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"sh","bash","csh","perl"}, callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/#//<CR><CMD>nohlsearch<CR>`o')    end, group = "comments" } )
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"yaml","python"},          callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/#//<CR><CMD>nohlsearch<CR>`o')    end, group = "comments" } )
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"cpp","c"},                callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/////<CR><CMD>nohlsearch<CR>`o')     end, group = "comments" } )
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"skill"},                  callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/;//<CR><CMD>nohlsearch<CR>`o')    end, group = "comments" } )
-vim.api.nvim_create_autocmd( "FileType", { pattern =  {"spice"},                  callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/*//<CR><CMD>nohlsearch<CR>`o')    end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"vim"},                    callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/"//<CR><CMD>nohlsearch<CR>`odmo')  end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"lua"},                    callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/--//<CR><CMD>nohlsearch<CR>`odmo') end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"sh","bash","csh","perl"}, callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/#//<CR><CMD>nohlsearch<CR>`odmo')  end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"yaml","python"},          callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/#//<CR><CMD>nohlsearch<CR>`odmo')  end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"cpp","c"},                callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/////<CR><CMD>nohlsearch<CR>`odmo') end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"skill"},                  callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/;//<CR><CMD>nohlsearch<CR>`odmo')  end, group = "comments" } )
+vim.api.nvim_create_autocmd( "FileType", { pattern =  {"spice"},                  callback = function() vim.keymap.set("n", "<leader>z", 'mo<CMD>s/*//<CR><CMD>nohlsearch<CR>`odmo')  end, group = "comments" } )
 
 --}}}
 --"""""""""""""""""""""""""""""""""""""""""""""""""
@@ -684,10 +683,19 @@ require("harpoon").setup {
     },
 }
 
+-- Setup NVim-Tree
+require("nvim-tree").setup({
+    sort_by  = "case_sensitive",
+    renderer = { group_empty = true, },
+    filters  = { dotfiles = false, },
+})
+
 -- Set the Color Scheme one more Time
 -- as some Plugin is overwritting the
 -- colors...
-vim.cmd.colorscheme 'molo'
+if ( vim.g.loaded_molo == 1 ) then
+    vim.cmd.colorscheme 'molo'
+end
 
 --}}}
 
