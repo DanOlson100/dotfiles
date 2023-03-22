@@ -38,7 +38,6 @@ require('lazy').setup({
     'ap/vim-css-color',                               -- CSS color highlighter
     'chrisbra/vim-diff-enhanced',                     -- Use GIT diff algorithms
     'farmergreg/vim-lastplace',                       -- Let vim goto the last edit position except commit msgs.
-    'frazrepo/vim-rainbow',                           -- Enhanced Rainbow Parens
     'godlygeek/tabular',                              -- For aligning text using :Tab /= or such
     'jreybert/vimagit',                               -- Some git cmds added to Vim
     'kshenoy/vim-signature',                          -- Shows marks and move between them
@@ -111,13 +110,16 @@ require('lazy').setup({
             pcall(require('nvim-treesitter.install').update { with_sync = true })
         end,
     },
+    { 'HiPhish/nvim-ts-rainbow2'},                    -- Rainbow parens
+    { 'lewis6991/impatient.nvim'},                    -- Load Lua into a cache for faster startup
 
-    -- Harpoon Project Navigation  
+    -- Harpoon for Project Navigation  
     { 'ThePrimeagen/harpoon',
         dependencies = { 'nvim-lua/plenary.nvim' },
     },
 
 }, {
+    -- Don't Install on Startup
     install = {
         missing = false,
     },
@@ -543,6 +545,12 @@ require('nvim-treesitter.configs').setup {
             },
         },
     },
+    rainbow = {
+        enable = true,
+        disable = {},
+        query = 'rainbow-parens',
+        strategy = require 'ts-rainbow'.strategy.global,
+    },
 }
 
 -- Diagnostic keymaps
@@ -689,6 +697,9 @@ require("nvim-tree").setup({
     renderer = { group_empty = true, },
     filters  = { dotfiles = false, },
 })
+
+-- Use the Impatient Plugin for Faster Startup
+require('impatient')
 
 -- Set the Color Scheme one more Time
 -- as some Plugin is overwritting the
