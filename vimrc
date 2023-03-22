@@ -89,7 +89,7 @@ set undofile                                "Use Undo files to let undo work acr
 syntax on                                         "Turn on syntax highlighting
 set background=dark                               "Try to use good colors
 
-if (g:loaded_molo == 1 )
+if !empty("g.loaded_molo")
     colorscheme molo                              "Set the color scheme
 else
     colorscheme darkblue                          "Set the color scheme
@@ -142,7 +142,7 @@ endif
 
 " Get the git Branch w/ the Plugin vim-fugitive
 " But only do it an specific events
-if (g:loaded_fugitive == 1)
+if !empty("g.loaded_fugitive")
     augroup gitstatusline
         au!
         autocmd BufEnter,FocusGained,BufWritePost *  let b:git_status = fugitive#Head()
@@ -313,7 +313,7 @@ vnoremap ii <Esc>
 noremap vv <C-v>
 
 " Map ww to Ctrl-w Ctrl-w
-norempa ww <C-w><C-w>
+noremap ww <C-w><C-w>
 
 " Use Space to toggle folds
 nnoremap <Space> za
@@ -432,7 +432,7 @@ nnoremap <leader>nt <Cmd>NERDTreeToggle<CR>
 nnoremap <leader>ig <Cmd>IndentGuidesToggle<CR>
 
 " Toggle UndoTree
-nnoremap <leader>ut <Cmd>UndoTreeToggle<CR>
+nnoremap <leader>ut <Cmd>UndotreeToggle<CR>
 
 " Toggle Context
 nnoremap <leader>ct <Cmd>ContextToggle<CR>
