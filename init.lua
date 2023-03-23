@@ -112,7 +112,7 @@ require('lazy').setup({
     },
     { 'HiPhish/nvim-ts-rainbow2'},                    -- Rainbow parens
     { 'lewis6991/impatient.nvim'},                    -- Load Lua into a cache for faster startup
-
+    { 'akinsho/bufferline.nvim'},                     -- Buffer Tabs at the top
     -- Harpoon for Project Navigation  
     { 'ThePrimeagen/harpoon',
         dependencies = { 'nvim-lua/plenary.nvim' },
@@ -697,6 +697,9 @@ require("nvim-tree").setup({
     renderer = { group_empty = true, },
     filters  = { dotfiles = false, },
 })
+
+-- Setup Buffer Tabs at the top
+require("bufferline").setup{}
 
 -- Use the Impatient Plugin for Faster Startup
 require('impatient')
