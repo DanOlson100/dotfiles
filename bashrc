@@ -60,8 +60,8 @@ else
 fi
 
 # Set user PATH if it exists
-if [ -d ~/bin ]; then
-    PATH=$PATH:~/bin
+if [[ ! "$PATH" == *$HOME/bin* ]]; then
+    [ -d ~/bin ] && export PATH=~/bin:$PATH
 fi
 
 # Enable programmable 33completion features (you don't need to enable
@@ -98,9 +98,7 @@ fi
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
-if [ -f ~/.aliases ]; then
-    . ~/.aliases
-fi
+[ -f ~/.aliases ] && source ~/.aliases
 
 #################################################
 # Functions
