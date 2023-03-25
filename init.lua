@@ -139,7 +139,7 @@ vim.opt.title = true                                  -- Show filename in title 
 
 -- Neovim uses a different format for undo files
 --  Only Neovim uses this file
-vim.opt.undodir  = HOME .. "/.config/nvim/undo-dir"   -- Set Undo file storage location
+vim.opt.undodir  = vim.fn.stdpath 'data' .. "//undo-dir"   -- Set Undo file storage location
 vim.opt.undofile = true                               -- Use Undo files to let undo work across exits
 
 --}}} 
@@ -453,105 +453,111 @@ vim.g.DiffUnit = "Char"
 --vim.g.DiffUnit = "Word"
 
 -- Configure Telescope
-require('telescope').setup {
-    defaults = {
-        mappings = {
-            i = {
-                ['<C-u>'] = false,
-                ['<C-d>'] = false,
+local ts_status, ts_plug = pcall(require, 'telescope')
+if ts_status then
+    ts_plug.setup {
+        defaults = {
+            mappings = {
+                i = {
+                    ['<C-u>'] = false,
+                    ['<C-d>'] = false,
+                },
             },
         },
-    },
-}
+    }
 
--- Enable telescope fzf native, if installed
-pcall(require('telescope').load_extension, 'fzf')
+    -- Enable telescope fzf native, if installed
+    pcall(require('telescope').load_extension, 'fzf')
 
--- Setup Keymaps for Telescope
-vim.keymap.set('n', '<leader>sf',      require('telescope.builtin').find_files,  { desc = '[S]earch [F]iles' })
-vim.keymap.set('n', '<leader>sh',      require('telescope.builtin').help_tags,   { desc = '[S]earch [H]elp' })
-vim.keymap.set('n', '<leader>sw',      require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-vim.keymap.set('n', '<leader>sg',      require('telescope.builtin').live_grep,   { desc = '[S]earch by [G]rep' })
-vim.keymap.set('n', '<leader>sd',      require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
-vim.keymap.set('n', '<leader>?',       require('telescope.builtin').oldfiles,    { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers,     { desc = '[ ] Find existing buffers' })
-vim.keymap.set('n', '<leader>/', function()
-    require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-        winblend = 10,
-        previewer = false,
-    })
-end, { desc = '[/] Fuzzily search in current buffer' })
+    -- Setup Keymaps for Telescope
+    vim.keymap.set('n', '<leader>sf',      require('telescope.builtin').find_files,  { desc = '[S]earch [F]iles' })
+    vim.keymap.set('n', '<leader>sh',      require('telescope.builtin').help_tags,   { desc = '[S]earch [H]elp' })
+    vim.keymap.set('n', '<leader>sw',      require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
+    vim.keymap.set('n', '<leader>sg',      require('telescope.builtin').live_grep,   { desc = '[S]earch by [G]rep' })
+    vim.keymap.set('n', '<leader>sd',      require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+    vim.keymap.set('n', '<leader>?',       require('telescope.builtin').oldfiles,    { desc = '[?] Find recently opened files' })
+    vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers,     { desc = '[ ] Find existing buffers' })
+    vim.keymap.set('n', '<leader>/', function()
+        require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+            winblend = 10,
+            previewer = false,
+        })
+    end, { desc = '[/] Fuzzily search in current buffer' })
+end
 
 -- Configure Treesitter
-require('nvim-treesitter.configs').setup {
-    -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim' },
+local tsit_status, tsit_plug = pcall(require, 'nvim-treesitter.configs')
+if tsit_status then
+    tsit_plug.setup {
+        -- Add languages to be installed here that you want installed for treesitter
+        ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim' },
 
-    -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-    auto_install = false,
+        -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
+        auto_install = false,
 
-    highlight = { enable = true },
-    indent = { enable = true, disable = { 'python' } },
-    incremental_selection = {
-        enable = true,
+        highlight = { enable = true },
+        indent = { enable = true, disable = { 'python' } },
+        incremental_selection = {
+            enable = true,
             keymaps = {
-            init_selection = '<c-space>',
-            node_incremental = '<c-space>',
-            scope_incremental = '<c-s>',
-            node_decremental = '<M-space>',
+                init_selection = '<c-space>',
+                node_incremental = '<c-space>',
+                scope_incremental = '<c-s>',
+                node_decremental = '<M-space>',
+            },
         },
-    },
-    textobjects = {
-        select = {
+        textobjects = {
+            select = {
+                enable = true,
+                lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+                keymaps = {
+                    -- You can use the capture groups defined in textobjects.scm
+                    ['aa'] = '@parameter.outer',
+                    ['ia'] = '@parameter.inner',
+                    ['af'] = '@function.outer',
+                    ['if'] = '@function.inner',
+                    ['ac'] = '@class.outer',
+                    ['ic'] = '@class.inner',
+                },
+            },
+            move = {
+                enable = true,
+                set_jumps = true, -- whether to set jumps in the jumplist
+                goto_next_start = {
+                    [']m'] = '@function.outer',
+                    [']]'] = '@class.outer',
+                },
+                goto_next_end = {
+                    [']M'] = '@function.outer',
+                    [']['] = '@class.outer',
+                },
+                goto_previous_start = {
+                    ['[m'] = '@function.outer',
+                    ['[['] = '@class.outer',
+                },
+                goto_previous_end = {
+                    ['[M'] = '@function.outer',
+                    ['[]'] = '@class.outer',
+                },
+            },
+            swap = {
+                enable = true,
+                swap_next = {
+                    ['<leader>a'] = '@parameter.inner',
+                },
+                swap_previous = {
+                    ['<leader>A'] = '@parameter.inner',
+                },
+            },
+        },
+        rainbow = {
             enable = true,
-            lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-            keymaps = {
-                -- You can use the capture groups defined in textobjects.scm
-                ['aa'] = '@parameter.outer',
-                ['ia'] = '@parameter.inner',
-                ['af'] = '@function.outer',
-                ['if'] = '@function.inner',
-                ['ac'] = '@class.outer',
-                ['ic'] = '@class.inner',
-            },
+            disable = {},
+            query = 'rainbow-parens',
+            strategy = require 'ts-rainbow'.strategy.global,
         },
-        move = {
-            enable = true,
-            set_jumps = true, -- whether to set jumps in the jumplist
-            goto_next_start = {
-                [']m'] = '@function.outer',
-                [']]'] = '@class.outer',
-            },
-            goto_next_end = {
-                [']M'] = '@function.outer',
-                [']['] = '@class.outer',
-            },
-            goto_previous_start = {
-                ['[m'] = '@function.outer',
-                ['[['] = '@class.outer',
-            },
-            goto_previous_end = {
-                ['[M'] = '@function.outer',
-                ['[]'] = '@class.outer',
-            },
-        },
-        swap = {
-            enable = true,
-            swap_next = {
-                ['<leader>a'] = '@parameter.inner',
-            },
-            swap_previous = {
-                ['<leader>A'] = '@parameter.inner',
-            },
-        },
-    },
-    rainbow = {
-        enable = true,
-        disable = {},
-        query = 'rainbow-parens',
-        strategy = require 'ts-rainbow'.strategy.global,
-    },
-}
+    }
+end
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d',        vim.diagnostic.goto_prev,  { desc = "Go to previous diagnostic message" })
@@ -608,101 +614,127 @@ local servers = {
 }
 
 -- Setup Neovim Lua Configuration
-require('neodev').setup()
+local nd_status, nd_plug = pcall(require, 'neodev')
+if nd_status then
+    nd_plug.setup()
+end
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+local cnl_status, cnl_plug = pcall(require, 'cmp_nvim_list')
+if cnl_status then
+    capabilities = cnl_plug.default_capabilities(capabilities)
+end
 
 -- Setup mason so it can manage external tooling
-require('mason').setup()
+local mason_status, mason_plug = pcall(require, 'mason')
+if mason_status then
+    mason_plug.setup()
+end
 
 -- Ensure the servers above are installed
-local mason_lspconfig = require 'mason-lspconfig'
+local mlsp_status, mason_lspconfig = pcall(require, 'mason-lspconfig')
+if mlsp_status then
+    mason_lspconfig.setup {
+        ensure_installed = vim.tbl_keys(servers),
+    }
 
-mason_lspconfig.setup {
-    ensure_installed = vim.tbl_keys(servers),
-}
-
-mason_lspconfig.setup_handlers {
-    function(server_name)
-        require('lspconfig')[server_name].setup {
-            capabilities = capabilities,
-            on_attach = on_attach,
-            settings = servers[server_name],
-        }
-    end,
-}
+    mason_lspconfig.setup_handlers {
+        function(server_name)
+            require('lspconfig')[server_name].setup {
+                capabilities = capabilities,
+                on_attach = on_attach,
+                settings = servers[server_name],
+            }
+        end,
+    }
+end
 
 -- nvim-cmp setup
-local cmp = require 'cmp'
-local luasnip = require 'luasnip'
+local cmp_status, cmp = pcall(require, 'cmp')
+if cmp_status then
 
-luasnip.config.setup {}
+    local ls_status, luasnip = pcall(require, 'luasnip')
+    if ls_status then
+        luasnip.config.setup {}
 
-cmp.setup {
-    snippet = {
-        expand = function(args)
-            luasnip.lsp_expand(args.body)
-        end,
-    },
-    mapping = cmp.mapping.preset.insert {
-        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete {},
-        ['<CR>'] = cmp.mapping.confirm {
-            behavior = cmp.ConfirmBehavior.Replace,
-            select = true,
-        },
-        ['<Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
-    },
-    sources = {
-        { name = 'nvim_lsp' },
-        { name = 'luasnip' },
-    },
-}
+        cmp.setup {
+            snippet = {
+                expand = function(args)
+                    luasnip.lsp_expand(args.body)
+                end,
+            },
+            mapping = cmp.mapping.preset.insert {
+                ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+                ['<C-f>'] = cmp.mapping.scroll_docs(4),
+                ['<C-Space>'] = cmp.mapping.complete {},
+                ['<CR>'] = cmp.mapping.confirm {
+                    behavior = cmp.ConfirmBehavior.Replace,
+                    select = true,
+                },
+                ['<Tab>'] = cmp.mapping(function(fallback)
+                    if cmp.visible() then
+                        cmp.select_next_item()
+                    elseif luasnip.expand_or_jumpable() then
+                        luasnip.expand_or_jump()
+                    else
+                        fallback()
+                    end
+                end, { 'i', 's' }),
+                ['<S-Tab>'] = cmp.mapping(function(fallback)
+                    if cmp.visible() then
+                        cmp.select_prev_item()
+                    elseif luasnip.jumpable(-1) then
+                        luasnip.jump(-1)
+                    else
+                        fallback()
+                    end
+                end, { 'i', 's' }),
+            },
+            sources = {
+                { name = 'nvim_lsp' },
+                { name = 'luasnip' },
+            },
+        }
+    end
+end
 
 -- Setup Harpoon
-require("harpoon").setup {
-    global_settings = {
-        save_on_toggle = false,
-        save_on_change = true,
-        enter_on_sendcmd = false,
-        tmux_autoclose_windows = false,
-        excluded_filetypes = { "harpoon" },
-        mark_branch = false,
-    },
-}
+local har_status, har_plug = pcall(require, 'harpoon')
+if har_status then
+    har_plug.setup {
+        global_settings = {
+            save_on_toggle = false,
+            save_on_change = true,
+            enter_on_sendcmd = false,
+            tmux_autoclose_windows = false,
+            excluded_filetypes = { "harpoon" },
+            mark_branch = false,
+        },
+    }
+end
 
 -- Setup NVim-Tree
-require("nvim-tree").setup({
-    sort_by  = "case_sensitive",
-    renderer = { group_empty = true, },
-    filters  = { dotfiles = false, },
-})
+local nt_status, nt_plug = pcall(require, 'nvim-tree')
+if nt_status then
+    nt_plug.setup({
+        sort_by  = "case_sensitive",
+        renderer = { group_empty = true, },
+        filters  = { dotfiles = false, },
+    })
+end
 
 -- Setup Buffer Tabs at the top
-require("bufferline").setup{}
+local bl_status, bl_plug = pcall(require, 'bufferline')
+if bl_status then
+    bl_plug.setup{}
+end
 
 -- Use the Impatient Plugin for Faster Startup
-require('impatient')
+local imp_status, imp_plug = pcall(require, 'impatient')
+if imp_status then
+    require('impatient')
+end
 
 -- Set the Color Scheme one more Time
 -- as some Plugin is overwritting the
