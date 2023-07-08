@@ -54,6 +54,7 @@
 [core]
     pager = less -FRX 
     editor = vim
+#   editor = nvim
     excludesfile = ~/.gitignore_global
     whitespace = trailing-space,space-before-tab
 
@@ -66,10 +67,12 @@
     prompt = false
 
 [difftool "vimdiff"]
-    cmd = "vimdiff --nofork $REMOTE $LOCAL"
+    cmd ="vimdiff --nofork $REMOTE $LOCAL"
+#   cmd = "nvim -d $REMOTE $LOCAL"
 
 [difftool "gvimdiff"]
     cmd = "gvimdiff --nofork $REMOTE $LOCAL"
+#   cmd = "nvim-qt -d --nofork $REMOTE $LOCAL"
 
 [fetch]
     fsckObjects = true

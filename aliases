@@ -10,13 +10,18 @@ alias rm='rm -iv'
 alias cp='cp -iv'
 alias mv='mv -iv'
 
-alias vim='vim -X '
+# Vim Shortcuts
+#type nvim    > /dev/null && alias vim='nvim '
+#type nvim-qt > /dev/null && alias gvim='nvim-qt '
+
+#alias vim='vim -X '
 alias view='vim -R '
 alias gdiff='gvim -d '
 alias vimfix='vim -N -u NONE -U NONE'
 alias v='vim -X'
 alias gv='gvim '
 alias nv='nvim -X'
+alias vvim='vim -X'
 
 alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
