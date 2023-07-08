@@ -312,8 +312,9 @@ vnoremap ii <Esc>
 " Map vv to <Ctrl>v to use when terminal has Paste
 noremap vv <C-v>
 
-" Map ww to Ctrl-w Ctrl-w
-noremap ww <C-w><C-w>
+" Map qq to Ctrl-w Ctrl-w
+"noremap ww <C-w><C-w>
+noremap qq <C-w><C-w>
 
 " Use Space to toggle folds
 nnoremap <Space> za
@@ -478,5 +479,13 @@ let g:deoplete#enable_at_startup = 1
 "\}
 "let g:ale_sign_error   = '>>'
 "let g:ale_sign_warning = '--'
+
+" Do Special Things for large files
+"  Check these vars to see if disabled g:ale_enable and g:context
+augroup LargeFiles
+    let g:large_file = 1048576   " 1MB
+    au BufReadPre * let f=expand("<afile>") | if getfsize(f) > g:large_file | execute "ContextDisable" | execute "ALEDisable" | endif
+augroup END
+
 
 " }}}
