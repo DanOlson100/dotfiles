@@ -5,6 +5,29 @@
 -- Plugin Setup                                 {{{
 local HOME=os.getenv("HOME") or ""
 
+-- Check File/Dir Exists
+local function exists(name)
+    if type(name)~="string" then return false end
+    return os.rename(name,name) and true or false
+end
+
+-- Check if File
+local function IsFile(name)
+    if type(name)~="string" then return false end
+    if not exists(name) then return false end
+    local f = io.open(name)
+    if f then
+        f:close()
+        return true
+    end
+    return false
+end
+
+-- Check if Dir
+local function IsDir(name)
+    return (exists(name) and not IsFile(name))
+end
+
 --  Set <leader>, Must happen before plugins are loaded, otherwise wrong leader will be used
 vim.g.mapleader = ','
 vim.g.maplocalleader = ','
@@ -12,6 +35,29 @@ vim.g.maplocalleader = ','
 -- Diable NetRW for Nvim-Tree
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
+
+-- Large File Support
+local bigfile = 1024*1024
+local aug = vim.api.nvim_create_augroup("buf_large", {clear = true})
+vim.api.nvim_create_autocmd({"BufReadPre"}, {
+    callback = function()
+        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
+        if ok and stats and (stats.size > bigfile) then
+            vim.b.large_bud = true
+            --vim.opt.syntax = "off"
+            --vim.cmd("IlluminatePauseBuf")
+            --vim.cmd("IndentBlanklineDisable")
+            vim.cmd("ContextDisable")
+            vim.opt_local.foldmethod = "manual"
+            vim.opt_local.spell = false
+            vim.cmd("TSBufDisable autotag")
+        else
+            vim.b.large_buf = false
+        end
+    end,
+    group = aug,
+    pattern = "*",
+})
 
 --}}}
 --"""""""""""""""""""""""""""""""""""""""""""""""""
@@ -44,6 +90,7 @@ require('lazy').setup({
     'mbbill/undotree',                                -- Visualize Undo as a Tree
     'preservim/vim-indent-guides',                    -- Indent Color guides
     'rickhowe/diffchar.vim',                          -- Highlight only the Exact differences
+    'sheerun/vim-polyglot',                           -- Various Syntax Files
     'tpope/vim-eunuch',                               -- Various System commands
     'tpope/vim-fugitive',                             -- Git in Vim
     'tpope/vim-surround',                             -- Add/Remove Surrounding anything
@@ -55,7 +102,7 @@ require('lazy').setup({
         dependencies = {
             'williamboman/mason.nvim',                -- LSP Installer Plugin
             'williamboman/mason-lspconfig.nvim',      -- LSP Config Plugin
-            { 'j-hui/fidget.nvim', opts = {} },       -- UI for LSP Plugins
+            { 'j-hui/fidget.nvim', opts = { }, tag = 'legacy' },       -- UI for LSP Plugins
             'folke/neodev.nvim',                      -- LSP Setup Plugin
         },
     },
@@ -77,9 +124,9 @@ require('lazy').setup({
     },
 
     { 'inkarkat/vim-mark',                              -- Mark Words to Highlight
-        priority = 999,                                 -- Needed for * 
+        priority = 999,                                 -- Needed for priority issue with * 
         dependencies = {
-            'inkarkat/vim-ingo-library',                      -- Dep Lib for vim-mark
+            'inkarkat/vim-ingo-library',                -- Dep Lib for vim-mark
         },
     },
 
@@ -146,7 +193,7 @@ vim.opt.undofile = true                               -- Use Undo files to let u
 --"""""""""""""""""""""""""""""""""""""""""""""""""
 -- Coloring                                     {{{
 vim.opt.syntax = "on"                                 -- Turn on syntax highlighting
-vim.opt.background = dark                             -- Try to use good colors
+vim.opt.background = "dark"                           -- Try to use good colors
 -- NOTE: You should make sure your terminal supports this
 vim.opt.termguicolors = true                          -- Turn on True Colors if the Term support it
 
@@ -230,7 +277,7 @@ vim.opt.smartcase = true                              -- Use case when searching
 -- Text Formatting/Layout                       {{{
 --set formatoptions=tcrqn                             -- Format Option t=autowrap text, c=autowrap comments & auto insert after enter
 --                                                    -- q=allow formatting with qq, n=reorganize numbered list
-vim.opt.smartindent = True                            -- Turn on smart indenting
+vim.opt.smartindent = true                            -- Turn on smart indenting
 --filetype plugin indent on                           -- Turn on the plugin indent
 vim.opt.tabstop = 4                                   -- Number of spaces to represent a Tab
 vim.opt.shiftwidth = 4                                -- Number of spaces to use for each step of auto-indent
@@ -279,11 +326,11 @@ vim.opt.foldlevelstart = 0
 vim.api.nvim_create_augroup("gitcommit", {clear = true})
 vim.api.nvim_create_autocmd( "FileType", { pattern =  {"gitcommit"}, callback = function() vim.opt.textwidth=72 vim.opt.colorcolumn="51,73" end, group = "gitcommit" } )
 
---if IsFile( HOME .. "/.vim/filetypes.vim") then
---    source HOME .. "/.vim/filetypes.vim"
---elseif IsFile( HOME .. "/vimfiles/filetypes.vim") then
---    source HOME .. "/vimfiles/filetypes.vim"
---end
+if IsFile( HOME .. "/.vim/filetypes.vim") then
+    vim.cmd( "source" .. HOME .. "/.vim/filetypes.vim")
+elseif IsFile( HOME .. "/vimfiles/filetypes.vim") then
+    vim.cmd( "source" .. HOME .. "/vimfiles/filetypes.vim")
+end
 --}}}
 --"""""""""""""""""""""""""""""""""""""""""""""""""
 -- Key Mappings                                 {{{
@@ -326,7 +373,8 @@ vim.keymap.set( "n", "<C-f>", "<PageDown>")
 vim.keymap.set( "n", "<C-b>", "<PageUp>")
 
 -- Switch Splits
-vim.keymap.set( "n", "ww", "<C-w><C-w>")
+--vim.keymap.set( "n", "ww", "<C-w><C-w>")
+vim.keymap.set( "n", "qq", "<C-w><C-w>")
 
 -- Buffer Commands
 -- :b1 - move to buffer 1
@@ -490,12 +538,13 @@ local tsit_status, tsit_plug = pcall(require, 'nvim-treesitter.configs')
 if tsit_status then
     tsit_plug.setup {
         -- Add languages to be installed here that you want installed for treesitter
-        ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim' },
+        ensure_installed = { 'bash', 'c', 'cpp', 'go', 'lua', 'perl', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim' },
 
         -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
         auto_install = false,
 
         highlight = { enable = true },
+        --highlight = { enable = true, disable = function(){ return vim.b.large_buf } },
         indent = { enable = true, disable = { 'python' } },
         incremental_selection = {
             enable = true,
@@ -742,6 +791,8 @@ end
 if ( vim.g.loaded_molo == 1 ) then
     vim.cmd.colorscheme 'molo'
 end
+
+
 
 --}}}
 
