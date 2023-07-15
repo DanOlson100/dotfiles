@@ -157,7 +157,7 @@ require('lazy').setup({
             pcall(require('nvim-treesitter.install').update { with_sync = true })
         end,
     },
-    { 'HiPhish/nvim-ts-rainbow2'},                    -- Rainbow parens
+    { 'HiPhish/rainbow-delimiters.nvim'},             -- Rainbow parens
     { 'lewis6991/impatient.nvim'},                    -- Load Lua into a cache for faster startup
     { 'akinsho/bufferline.nvim'},                     -- Buffer Tabs at the top
     -- Harpoon for Project Navigation  
@@ -186,7 +186,7 @@ vim.opt.title = true                                  -- Show filename in title 
 
 -- Neovim uses a different format for undo files
 --  Only Neovim uses this file
-vim.opt.undodir  = vim.fn.stdpath 'data' .. "//undo-dir"   -- Set Undo file storage location
+vim.opt.undodir  = vim.fn.stdpath('data') .. "/undo-dir"   -- Set Undo file storage location
 vim.opt.undofile = true                               -- Use Undo files to let undo work across exits
 
 --}}} 
@@ -538,7 +538,7 @@ local tsit_status, tsit_plug = pcall(require, 'nvim-treesitter.configs')
 if tsit_status then
     tsit_plug.setup {
         -- Add languages to be installed here that you want installed for treesitter
-        ensure_installed = { 'bash', 'c', 'cpp', 'go', 'lua', 'perl', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim' },
+        ensure_installed = { 'bash', 'c', 'cpp', 'go', 'lua', 'perl', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim' },
 
         -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
         auto_install = false,
@@ -598,12 +598,6 @@ if tsit_status then
                     ['<leader>A'] = '@parameter.inner',
                 },
             },
-        },
-        rainbow = {
-            enable = true,
-            disable = {},
-            query = 'rainbow-parens',
-            strategy = require 'ts-rainbow'.strategy.global,
         },
     }
 end
@@ -777,6 +771,30 @@ end
 local bl_status, bl_plug = pcall(require, 'bufferline')
 if bl_status then
     bl_plug.setup{}
+end
+
+-- Setup Rainbow delimiters
+local rain_status, rain_plug = pcall(require, 'rainbow-delimiters')
+if rain_status then
+    vim.g.rainbow_delimiters = {
+        strategy = {
+            [''] = rain_plug.strategy['global'],
+            commonlisp = rain_plug.strategy['local'],
+        },
+        query = {
+            [''] = 'rainbow-delimiters',
+            lua = 'rainbow-blocks',
+        },
+        highlight = {
+           'RainbowDelimiterRed',
+            'RainbowDelimiterYellow',
+            'RainbowDelimiterBlue',
+            'RainbowDelimiterOrange',
+            'RainbowDelimiterGreen',
+            'RainbowDelimiterViolet',
+            'RainbowDelimiterCyan',
+        },
+    }
 end
 
 -- Use the Impatient Plugin for Faster Startup
