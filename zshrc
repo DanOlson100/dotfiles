@@ -130,9 +130,10 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # Enable alternate cmds if available
-[ -f '/usr/bin/nala'   ] && alias apt='nala'
-[ -f '/usr/bin/exa'    ] && alias ls='exa -Fh --color=auto --group-directories-first'
-[ -f '/usr/bin/batcat' ] && alias cat='batcat'
+type nala   >> /dev/null && alias apt='nala '
+type exa    >> /dev/null && alias ls='exa -Fh --color=auto --group-directories-first '
+type bat    >> /dev/null && alias cat='bat '
+type moar   >> /dev/null && alias less='moar '
 
 # Setup Auto Suggestions Plugin
 [ -f ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ] && source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
