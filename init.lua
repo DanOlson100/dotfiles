@@ -3,6 +3,8 @@
 -- $Id: vimrc,v 1.12 2006/09/17 02:09:09 olson Exp $
 --"""""""""""""""""""""""""""""""""""""""""""""""""
 -- Plugin Setup                                 {{{
+vim.loader.enable()
+
 local HOME=os.getenv("HOME") or ""
 
 -- Check File/Dir Exists
@@ -80,7 +82,6 @@ vim.opt.rtp:prepend(lazypath)
 -- Setup Lazy and Install Other Plugins
 require('lazy').setup({
     -- Basic Vim Plugins
-    'airblade/vim-gitgutter',                         -- Git Changes in Gutter
     'ap/vim-css-color',                               -- CSS color highlighter
     'chrisbra/vim-diff-enhanced',                     -- Use GIT diff algorithms
     'farmergreg/vim-lastplace',                       -- Let vim goto the last edit position except commit msgs.
@@ -106,6 +107,8 @@ require('lazy').setup({
             'folke/neodev.nvim',                      -- LSP Setup Plugin
         },
     },
+
+    { 'lewis6991/gitsigns.nvim'},                     -- GitSigns in the Gutter - more features than gitgutter
 
     { 'hrsh7th/nvim-cmp',                             -- LSP Completion Plugin
         dependencies = {
@@ -158,8 +161,8 @@ require('lazy').setup({
         end,
     },
     { 'HiPhish/rainbow-delimiters.nvim'},             -- Rainbow parens
-    { 'lewis6991/impatient.nvim'},                    -- Load Lua into a cache for faster startup
     { 'akinsho/bufferline.nvim'},                     -- Buffer Tabs at the top
+
     -- Harpoon for Project Navigation  
     { 'ThePrimeagen/harpoon',
         dependencies = { 'nvim-lua/plenary.nvim' },
@@ -307,7 +310,7 @@ vim.opt.diffopt:append { "internal,algorithm:patience" }
 vim.opt.wildmenu = true
 vim.opt.wildmode = "list:longest"
 vim.opt.wildignore:append { ".hg,.git,.svn" }              -- Ignore version control files
-vim.opt.wildignore:append { "*.jpeg,*.jpg,*.bmp,*.png" }   -- Ignore version control files
+vim.opt.wildignore:append { "*.jpeg,*.jpg,*.bmp,*.png" }   -- Ignore binary picture files
 vim.opt.wildignore:append { "*.o,*.obj,*.exe,*.dll" }      -- Ignore compiled object files
 vim.opt.wildignore:append { "*.sw?" }                      -- Ignore vim swap files
 
@@ -797,10 +800,94 @@ if rain_status then
     }
 end
 
--- Use the Impatient Plugin for Faster Startup
-local imp_status, imp_plug = pcall(require, 'impatient')
-if imp_status then
-    require('impatient')
+-- Setup gitsigns for GitSigns functions
+local gs_status, gs_plug = pcall(require, 'gitsigns')
+if gs_status then
+    gs_plug.setup {
+        signs = {
+            add          = { text = '+' },
+            change       = { text = '~' },
+            delete       = { text = '-' },
+            topdelete    = { text = '‾' },
+            changedelete = { text = '~' },
+            untracked    = { text = '┆' },
+        },
+        signcolumn = true,          -- Toggle with `:Gitsigns toggle_signs`
+        numhl      = true,          -- Toggle with `:Gitsigns toggle_numhl`
+        linehl     = false,         -- Toggle with `:Gitsigns toggle_linehl`
+        word_diff  = false,         -- Toggle with `:Gitsigns toggle_word_diff`
+        watch_gitdir = {
+            follow_files = true
+        },
+        attach_to_untracked = true,
+        current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+        current_line_blame_opts = {
+            virt_text = true,
+            virt_text_pos = 'eol',  -- 'eol' | 'overlay' | 'right_align'
+            delay = 1000,
+            ignore_whitespace = false,
+        },
+        current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
+        sign_priority = 6,
+        update_debounce = 100,
+        status_formatter = nil,     -- Use default
+        max_file_length = 40000,    -- Disable when file is longer than this (in lines)
+        preview_config = {
+            -- Options passed to nvim_open_win
+            border = 'single',
+            style = 'minimal',
+            relative = 'cursor',
+            row = 0,
+            col = 1
+        },
+        yadm = { enable = false },
+
+        on_attach = function(bufnr)
+            local gs = package.loaded.gitsigns
+
+            local function map(mode, l, r, opts)
+                opts = opts or {}
+                opts.buffer = bufnr
+                vim.keymap.set(mode, l, r, opts)
+            end
+
+            -- Navigation
+            map('n', ']c', function()
+                if vim.wo.diff then return ']c' end
+                vim.schedule(function() gs.next_hunk() end)
+                return '<Ignore>'
+            end, {expr=true})
+
+            map('n', '[c', function()
+                if vim.wo.diff then return '[c' end
+                vim.schedule(function() gs.prev_hunk() end)
+                return '<Ignore>'
+            end, {expr=true})
+
+            -- Keybindings
+            map('n', '<leader>hs', gs.stage_hunk)
+            map('n', '<leader>hr', gs.reset_hunk)
+            map('v', '<leader>hs', function() gs.stage_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
+            map('v', '<leader>hr', function() gs.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
+            map('n', '<leader>hS', gs.stage_buffer)
+            map('n', '<leader>hu', gs.undo_stage_hunk)
+            map('n', '<leader>hR', gs.reset_buffer)
+            map('n', '<leader>hp', gs.preview_hunk)
+            map('n', '<leader>hb', function() gs.blame_line{full=true} end)
+            map('n', '<leader>tb', gs.toggle_current_line_blame)
+            map('n', '<leader>hd', gs.diffthis)
+            map('n', '<leader>hD', function() gs.diffthis('~') end)
+            map('n', '<leader>td', gs.toggle_deleted)
+
+            vim.keymap.set('n', '<leader>gss', function() vim.cmd("Gitsigns toggle_signs")     end )
+            vim.keymap.set('n', '<leader>gsn', function() vim.cmd("Gitsigns toggle_numhl")     end )
+            vim.keymap.set('n', '<leader>gsl', function() vim.cmd("Gitsigns toggle_linehl")    end )
+            vim.keymap.set('n', '<leader>gsw', function() vim.cmd("Gitsigns toggle_word_diff") end )
+
+            -- Text object
+            map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+        end
+    }
 end
 
 -- Set the Color Scheme one more Time
@@ -809,8 +896,6 @@ end
 if ( vim.g.loaded_molo == 1 ) then
     vim.cmd.colorscheme 'molo'
 end
-
-
 
 --}}}
 
