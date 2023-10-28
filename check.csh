@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
 set localdir=`/usr/bin/dirname $0`
-echo "Working from:: $localdir  to  ~/"
+echo "Comparing:: $localdir  to  ~/"
 
 # Get A list of files
 # Loop Over Files

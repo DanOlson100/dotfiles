@@ -8,11 +8,14 @@
     co = checkout
     d = difftool
     dc = difftool --cached
+    fileschanged = diff --name-status
+    filechanged  = diff --name-status
     forget = rm --cached
     gd = difftool -g
     gdc = difftool -g --cached
     lgfile    = log --date=short --reverse --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit --follow
     hist      = log --date=short --reverse --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit
+    histr     = log --date=short           --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit
     histlong  = log --date=short --reverse --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit --shortstat
     tagage = !sh -c 'git for-each-ref --sort=taggerdate refs/tags --format=\"%(refname:short)\"'
     sb = status -sb

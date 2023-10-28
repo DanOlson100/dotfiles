@@ -16,6 +16,7 @@ alias mv='mv -iv'
 
 #alias vim='vim -X '
 alias view='vim -R '
+alias nview='nvim -R '
 alias gdiff='gvim -d '
 alias vimfix='vim -N -u NONE -U NONE'
 alias v='vim -X'
