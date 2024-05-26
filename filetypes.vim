@@ -14,6 +14,7 @@ augroup filetypes
     au BufNewFile,BufRead .cshrc                 set syntax=tcsh
 
     au BufNewFile,BufRead .python_history        set syntax=python
+    au BufNewFile,BufRead sources.*.list         set syntax=debsources
 
 
 
