@@ -66,22 +66,16 @@ vim.api.nvim_create_autocmd({"BufReadPre"}, {
 -- Plugin Instalation                           {{{
 
 -- Install Lazy Plugin Manager
-local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
-    vim.fn.system {
-        'git',
-        'clone',
-        '--filter=blob:none',
-        'https://github.com/folke/lazy.nvim.git',
-        '--branch=stable',
-        lazypath,
-    }
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+    local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+    vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
 end
 vim.opt.rtp:prepend(lazypath)
 
 -- Setup Lazy and Install Other Plugins
 require('lazy').setup({
-    -- Basic Vim Plugins
+-- Basic Vim Plugins
     'ap/vim-css-color',                               -- CSS color highlighter
     'chrisbra/vim-diff-enhanced',                     -- Use GIT diff algorithms
     'farmergreg/vim-lastplace',                       -- Let vim goto the last edit position except commit msgs.
@@ -98,49 +92,70 @@ require('lazy').setup({
     'vim-scripts/IndexedSearch',                      -- Upgrade Search with status and location
     'wellle/context.vim',                             -- Show only context funtion/loops/if - Similar to TreeSitter-Context for Nvim
 
-    -- NeoVim Plugins with Configs
-    { 'neovim/nvim-lspconfig',                        -- LSP Plugin
+-- NeoVim Plugins with Configs
+    -- LSP Plugin
+    { 'neovim/nvim-lspconfig',
         dependencies = {
             'williamboman/mason.nvim',                -- LSP Installer Plugin
             'williamboman/mason-lspconfig.nvim',      -- LSP Config Plugin
             { 'j-hui/fidget.nvim', opts = { }, tag = 'legacy' },       -- UI for LSP Plugins
-            'folke/neodev.nvim',                      -- LSP Setup Plugin
+           'folke/neodev.nvim',                      -- LSP Setup Plugin
         },
     },
 
-    { 'lewis6991/gitsigns.nvim'},                     -- GitSigns in the Gutter - more features than gitgutter
+    -- Git Signs in the Gutter w/ more features than gitgutter
+    { 'lewis6991/gitsigns.nvim'},
 
-    { 'hrsh7th/nvim-cmp',                             -- LSP Completion Plugin
+    -- LSP Completion Plugins (Type Ahead)
+    { 'hrsh7th/nvim-cmp',
         dependencies = {
 	        'hrsh7th/cmp-nvim-lsp',                   -- LSP Source Plugin
-	        'L3MON4D3/LuaSnip',                       -- LSP Snip
+	        -- 'L3MON4D3/LuaSnip',                       -- LSP Snip
 	        'saadparwaiz1/cmp_luasnip'                -- LSP Completion Source for Snip
 	    },
     },
 
-    -- { 'folke/which-key.nvim', opts = {} },            -- Popup for key completion
-    { 'danolson100/molo',                             -- Personalized Color Scheme
+    -- LuaSnips Dep of nvim-cmp
+    -- Keep seperate from nvim-cmp to execute the build for jsregexp
+    {   "L3MON4D3/LuaSnip",
+        build = "make install_jsregexp"
+    },
+
+    -- Popup for key completion
+    -- { 'folke/which-key.nvim', opts = {} },
+
+    -- Personal Color Scheme 
+    {   'danolson100/molo',
         priority = 1001,
         config = function()
             vim.cmd.colorscheme 'molo'
         end,
     },
 
-    { 'inkarkat/vim-mark',                              -- Mark Words to Highlight
+    -- Lua Rocks Plugin
+--    {   "vhyrro/luarocks.nvim",
+--        priority = 1000, -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
+--        config = true,
+--    },
+
+    -- Mark Words to Highlight (Works in Vim)
+    {   'inkarkat/vim-mark',
         priority = 999,                                 -- Needed for priority issue with * 
         dependencies = {
             'inkarkat/vim-ingo-library',                -- Dep Lib for vim-mark
         },
     },
 
---    { 'lukas-reineke/indent-blankline.nvim',          -- Indent Guides
+    -- Indent Guides
+--    { 'lukas-reineke/indent-blankline.nvim',
 --        opts = {
 --            char = '┊',
 --            show_trailing_blankline_indent = false,
 --        },
 --    },
 
-    { 'nvim-tree/nvim-tree.lua' },                    -- NVim Directory Browser
+    -- NVim Directory Browser
+    { 'nvim-tree/nvim-tree.lua' },
 
     -- Telescope Fuzzy Finder and dependencies
     { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
@@ -156,12 +171,16 @@ require('lazy').setup({
         dependencies = {
             'nvim-treesitter/nvim-treesitter-textobjects',
         },
-        config = function()
-            pcall(require('nvim-treesitter.install').update { with_sync = true })
-        end,
+        --config = function()
+        --    pcall(require('nvim-treesitter.install').update { with_sync = true })
+        --end,
     },
-    { 'HiPhish/rainbow-delimiters.nvim'},             -- Rainbow parens
-    { 'akinsho/bufferline.nvim'},                     -- Buffer Tabs at the top
+
+    -- Rainbow Parens
+    { 'HiPhish/rainbow-delimiters.nvim'},
+
+    -- Buffer Tabs at the top
+    { 'akinsho/bufferline.nvim'},
 
     -- Harpoon for Project Navigation  
     { 'ThePrimeagen/harpoon',
@@ -499,9 +518,18 @@ vim.api.nvim_create_autocmd( "FileType", { pattern =  {"spice"},                
 --"""""""""""""""""""""""""""""""""""""""""""""""""
 -- Setup Plugins                                {{{
 
+-- Disable some providers
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_node_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_python3_provider = 0
+
 -- DiffChar Settings
 vim.g.DiffUnit = "Char"
 --vim.g.DiffUnit = "Word"
+
+-- Disable LuaRocks
+--opts.rocks.hererocks = false
 
 -- Configure Telescope
 local ts_status, ts_plug = pcall(require, 'telescope')
@@ -541,7 +569,7 @@ local tsit_status, tsit_plug = pcall(require, 'nvim-treesitter.configs')
 if tsit_status then
     tsit_plug.setup {
         -- Add languages to be installed here that you want installed for treesitter
-        ensure_installed = { 'bash', 'c', 'cpp', 'go', 'lua', 'perl', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim' },
+        --ensure_installed = { 'bash', 'c', 'cpp', 'go', 'lua', 'perl', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim' },
 
         -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
         auto_install = false,
@@ -655,6 +683,10 @@ local servers = {
         Lua = {
             workspace = { checkThirdParty = false },
             telemetry = { enable = false },
+            -- Add default global "vim" otherwise you get warnings in all vim configs
+            diagnostics = {
+                globals = { "vim" }
+            },
         },
     },
 }
@@ -840,7 +872,6 @@ if gs_status then
             row = 0,
             col = 1
         },
-        yadm = { enable = false },
 
         on_attach = function(bufnr)
             local gs = package.loaded.gitsigns
