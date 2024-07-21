@@ -70,7 +70,7 @@
     prompt = false
 
 [difftool "vimdiff"]
-    cmd ="vimdiff --nofork $REMOTE $LOCAL"
+    cmd = "vimdiff --nofork $REMOTE $LOCAL"
 #   cmd = "nvim -d $REMOTE $LOCAL"
 
 [difftool "gvimdiff"]
