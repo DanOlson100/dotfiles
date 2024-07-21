@@ -40,11 +40,13 @@ if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
     Plug 'preservim/nerdtree'                           "NerdTree File Browser
     Plug 'preservim/vim-indent-guides'                  "Indent Color guides
     Plug 'rafi/awesome-vim-colorschemes'                "Collection of Vim Color Schemes
-    Plug 'rickhowe/diffchar.vim'                        "Highlight only the Exact differences
+    Plug 'rickhowe/diffchar.vim', { 'commit' : '0187321' } "Highlight only the Exact differences
     Plug 'roxma/nvim-yarp'                              "Dep of deoplete.nvim
     Plug 'roxma/vim-hug-neovim-rpc'                     "Dep of deoplete.nvim
+    Plug 'ryanoasis/vim-devicons'                       "NerdTree filetype specific icons
     Plug 'sheerun/vim-polyglot'                         "Collection of syntax highlights
     Plug 'Shougo/deoplete.nvim'                         "Autocomplete Plugin
+    Plug 'tiagofumo/vim-nerdtree-syntax-highlight'      "Adds syntax highlighting to NerdTree
     Plug 'tpope/vim-commentary'                         "Add/Remove Comment Characters
     Plug 'tpope/vim-eunuch'                             "Various System commands
     Plug 'tpope/vim-fugitive'                           "Git in Vim

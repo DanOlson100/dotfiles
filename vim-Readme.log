@@ -1,0 +1,198 @@
+'airblade/vim-gitgutter'
+  Puts signs in the gutter for additions, modifications, and deletions for 
+  files in a git repo.
+  Keybindings:
+    ]c - Jump to next hunk
+    [c - Jump to previous hunk
+    
+  Commands:
+    :GitGutterDiffOrig
+
+'ap/vim-css-color'
+  Adds colors to named, hex, and rgb colors.
+
+'chrisbra/vim-diff-enhanced'
+  Use other algorithms for diffs.
+  Commands:
+    :EnhancedDiffIgnorePat pat
+    :EnhancedDiff myers|default|histogram|minimal|patience
+
+'cohama/lexima.vim'
+  Auto close parentheses and repeat by dot dot dot
+
+'danolson100/molo'
+  Dan's colorscheme
+
+'dense-analysis/ale'
+  Asynchronous Lint Engine
+
+  Commands:
+    :ALEGotToDefinition
+    :ALEFindReferences
+
+'deoplete-plugins/deoplete-jedi'
+  Dependancy for auto complete to work.
+
+'farmergreg/vim-lastplace'
+  Allows vim to return to the last edit position in a file upon opening.
+
+'frazrepo/vim-rainbow'
+   Color braces at different levels. No longer developed. 
+
+'godlygeek/tabular'
+  Line up text into tables.
+
+  Commands:
+    :Tab /=    - Align on equal
+    :Tab /:    - Align on colon
+    :Tab /:zs  - Align after colon
+
+'inkarkat/vim-mark'
+  Mark words with color.
+
+  Keybindings:
+    <leader>m   - Mark/unMark word under cursor
+    <leader>r   - Enter a regex to mark
+    <leader>n   - Unmark what is under the cursor
+
+  Commands:
+    :MarkClear  - Clears all marks
+
+'inkarkat/vim-ingo-library'
+  Dependancy of vim-mark
+
+'jreybert/vimagit'
+  Work with Git inside Vim.
+
+'junegunn/fzf.vim'
+  Run fzf inside a window in Vim.
+  Keybindings:
+    <leader>fzf
+
+  Command:
+    :Files   - Fzf search files
+    :GFiles  - Fzf search git files 
+    :Rg      - Ripgrep search through files
+
+'kshenoy/vim-signature'
+  Plugin to place, remove and move to marks displayed in the gutter.
+  Keybindings:
+    mx        - Toggle mark 'x' and display it
+    dmx       - Remove mark 'x'
+    m,        - Place next mark
+    m-        - Remove all marks from line
+    m<space>  - Remove all marks from file
+    ]-        - Jump to next line having a marker of the same type
+    [-        - Jump to prev line having a marker of teh same type
+
+'neoclide/coc.nvim'
+  Conquer of Completion
+
+'mbbill/undotree'
+  Shows a visual side bar of the undo history.
+  Keybinding:
+    <leader>ut  - Toggle UndoTree
+
+  Commands:
+  :UndotreeToggle
+
+'preservim/nerdtree'
+  A file system explorer
+  Keybindings:
+    <leader>nt  - Toggle NERDTree
+
+  Commands:
+    :NERDTreeToggle
+    :NERDTreeFind
+
+'preservim/vim-indent-guides'
+  Visual guide for displaying indent levels in Vim
+  Keybindings:
+  <leader>ig  - Toggle IndentGuides
+
+  Commands:
+    :IndentGuidesToggle
+
+'rafi/awesome-vim-colorschemes'
+  Multiple good vim colorschemes
+
+'rickhowe/diffchar.vim'
+  Highlight the exact differences based on characters and words.
+
+  Keybindings:
+   ]b - Jump to start of next diff
+   ]e - Jump to end of next diff
+   [b - Jump to start of previous diff
+   [e - Jump to end of next diff
+
+'roxma/nvim-yarp'
+  Dependancy of Deoplete  
+
+'roxma/vim-hug-neovim-rpc'
+  Dependancy of Deoplete 
+
+'ryanoasis/vim-devicons'
+  FileType specific icons for NerdTree
+
+'sheerun/vim-polyglot'
+  Collection of syntax highlighting lang packs for vim.
+
+'Shougo/deoplete.nvim'
+  Auto-completion framework for vim 
+
+'tiagofumo/vim-nerdtree-syntax-highlight'
+  Adds syntax highlighting to Nerdtree
+
+'tpope/vim-commentary'
+  Comment stuff out
+
+  Keybindings:
+    gcc - Comment out a line
+    gc  - Comment out the target of a motion
+
+  Add unkown FileTypes
+    autocmd FileType apache setlocal commentstring=#\ %s
+
+'tpope/vim-eunuch'
+  Unix commands in Vim
+
+  Commands:
+    :Remove - Delete a file on disk without E211: File no longer available.
+    :Delete  - Delete a file on disk and the buffer too.
+    :Move    - Rename a buffer and the file on disk simultaneously.
+    :Chmod   - Change the permissions of the current file.
+    :Mkdir   - Create a directory, defaulting to the parent of the current file.
+    :Cfind   - Run find and load the results into the quickfix list.
+    :Clocate - Run locate and load the results into the quickfix list.
+    :Wall    - Write every open widow.
+    :SudoWrite - Write a privileged file with sudo.
+    :SudoEdit  - Edit a privileged file with sudo.
+
+'tpope/vim-fugitive'
+  Vim plugin for Git
+
+  Commands:
+    :Git <git-command>  - Runs any Git command
+    :G   <git-command>  - Also runs any Git command
+    :Git  - Brings up a summary window
+
+'tpope/vim-surround'
+  Surrounds words and phrases with characters.
+
+  Keybindings:
+    cs"'  - Change " to '
+    cs'<q> - Change ' to <q> <\q>
+    cst"   - Change any to "
+    ds"    - Delete surrounding "
+
+'vim-scripts/IndexedSearch'
+  When searching shows "At match #N out of M matches"
+
+'wellle/context.vim'
+  Shows the context of the current buffer at the top.
+  Keybindings:
+    <leader>ct  - Toggle Context Display
+
+'Xuyuanp/nerdtree-git-plugin'
+  Add Git icons to Nerdtree
+

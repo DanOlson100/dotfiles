@@ -27,6 +27,8 @@ foreach file ( `ls $localdir` )
             breaksw
         case 'README.md':
             breaksw
+        case 'vim-Readme.log'
+            breaksw
         default:
             echo "Checking: $file"
             diff $file ~/.$file
