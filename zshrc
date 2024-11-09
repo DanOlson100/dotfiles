@@ -6,7 +6,7 @@
 #  https://github.com/zsh-users/zsh-syntax-highlighting
 #  https://github.com/softmoth/zsh-vim-mode
 #  https://github.com/shaunsauve/zsh-dirhistory.git
-#  the git-prompt needs a utf-8 
+#  the git-prompt needs a utf-8 Terminal
 
 # Enable Colors
 autoload -U colors && colors
@@ -43,6 +43,9 @@ export SHELL=`which zsh`
 export HOST=`hostname`
 export LANG=en_US.UTF-8
 #export LC_ALL="en_US.UTF-8"
+
+# Set a Permissable umask
+umask 002
 
 # Set Options
 setopt AUTO_CONTINUE  # Auto send a job a CONT signal
@@ -110,6 +113,11 @@ if [[ ! "$PATH" == *$HOME/bin* ]]; then
     [ -d ~/bin ] && export PATH=~/bin:$PATH
 fi
 
+# Add current dir to PATH if it isn't already
+if [[ ! "$PATH" == *./* ]]; then
+    export PATH=./:$PATH
+fi
+
 # Setup the Aliases
 [ -f ~/.aliases ] && source ~/.aliases
 
@@ -132,7 +140,7 @@ fi
 # Enable alternate cmds if available
 type nala   >> /dev/null && alias apt='nala '
 type exa    >> /dev/null && alias ls='exa -Fh --color=auto --group-directories-first '
-type bat    >> /dev/null && alias cat='bat '
+#type bat    >> /dev/null && alias cat='bat '
 type moar   >> /dev/null && alias less='moar '
 
 # Setup Auto Suggestions Plugin
