@@ -8,9 +8,9 @@
 "let g:ale_completion_enabled = 1
 
 " Context
-let g:context_add_mappings = 0    "Dont add mappins, interferes with H
+let g:context_add_mappings = 0    "Dont add mappings, interferes with H
 
-"}}}
+"}}} 
 """""""""""""""""""""""""""""""""""""""""""""""""
 " Plugins                                      {{{
 "  Commands
@@ -20,13 +20,15 @@ let g:context_add_mappings = 0    "Dont add mappins, interferes with H
 "    PlugStatus  - Fetch the status of the Plug-ins
 if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
     call plug#begin('~/.vim/plugged')
+
+    let g:clone_opt = "--config fetch.fsckobjects=false"
+
+    " Main Plugins
     Plug 'airblade/vim-gitgutter'                       "Git Changes in Gutter
     Plug 'ap/vim-css-color'                             "CSS color highlighter
     Plug 'chrisbra/vim-diff-enhanced'                   "Use GIT diff algorithms
     Plug 'cohama/lexima.vim', { 'on': 'ToggleAutoClose'} "Auto Close characters
     Plug 'danolson100/molo'                             "Molo Color Scheme
-    Plug 'dense-analysis/ale'                           "Auto Linter Engine
-    Plug 'deoplete-plugins/deoplete-jedi'               "Python Deoplete LSP
     Plug 'farmergreg/vim-lastplace'                     "Let vim goto the last edit position except commit msgs.
     Plug 'frazrepo/vim-rainbow'                         "Enhanced Rainbow Parens
     Plug 'godlygeek/tabular'                            "For aligning text using :Tab /= or such
@@ -35,25 +37,32 @@ if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
     Plug 'jreybert/vimagit'                             "Some git cmds added to Vim
     Plug 'junegunn/fzf.vim'                             "FZF Vim integration with common Cmd maps
     Plug 'kshenoy/vim-signature'                        "Shows marks and move between them
-    Plug 'neoclide/coc.nvim', { 'branch': 'release', 'on': 'ToggleCoC' }
-    Plug 'mbbill/undotree'                              "Undo Tree Viewer
-    Plug 'preservim/nerdtree'                           "NerdTree File Browser
     Plug 'preservim/vim-indent-guides'                  "Indent Color guides
     Plug 'rafi/awesome-vim-colorschemes'                "Collection of Vim Color Schemes
-    Plug 'rickhowe/diffchar.vim', { 'commit' : '0187321' } "Highlight only the Exact differences
-    Plug 'roxma/nvim-yarp'                              "Dep of deoplete.nvim
-    Plug 'roxma/vim-hug-neovim-rpc'                     "Dep of deoplete.nvim
-    Plug 'ryanoasis/vim-devicons'                       "NerdTree filetype specific icons
+    Plug 'rickhowe/diffchar.vim', { 'commit' : '0187321' } "Highlight only the Exact differences   
+    Plug 'mbbill/undotree'                              "Undo Tree Viewer
     Plug 'sheerun/vim-polyglot'                         "Collection of syntax highlights
-    Plug 'Shougo/deoplete.nvim'                         "Autocomplete Plugin
-    Plug 'tiagofumo/vim-nerdtree-syntax-highlight'      "Adds syntax highlighting to NerdTree
     Plug 'tpope/vim-commentary'                         "Add/Remove Comment Characters
     Plug 'tpope/vim-eunuch'                             "Various System commands
     Plug 'tpope/vim-fugitive'                           "Git in Vim
     Plug 'tpope/vim-surround'                           "Add/Remove Surrounding anything
     Plug 'vim-scripts/IndexedSearch'                    "Upgrade Search with status and location
     Plug 'wellle/context.vim'                           "Show only context funtion/loops/if - Similar to TreeSitter-Context for Nvim
-    Plug 'Xuyuanp/nerdtree-git-plugin'                  "NerdTree git status flags
+
+    " Advanced Pugins - Load on NFS at Home or Work
+    if !empty(glob("~/Videos/"))  || !empty(glob("~/temp"))
+        Plug 'dense-analysis/ale'                           "Auto Linter Engine
+        Plug 'deoplete-plugins/deoplete-jedi'               "Python Deoplete LSP
+        Plug 'neoclide/coc.nvim', { 'branch': 'release', 'on': 'ToggleCoC' }
+        Plug 'preservim/nerdtree'                           "NerdTree File Browser
+        Plug 'roxma/nvim-yarp'                              "Dep of deoplete.nvim
+        Plug 'roxma/vim-hug-neovim-rpc'                     "Dep of deoplete.nvim
+        Plug 'ryanoasis/vim-devicons'                       "NerdTree filetype specific icons
+        Plug 'Shougo/deoplete.nvim'                         "Autocomplete Plugin
+        Plug 'tiagofumo/vim-nerdtree-syntax-highlight'      "Adds syntax highlighting to NerdTree
+        Plug 'Xuyuanp/nerdtree-git-plugin'                  "NerdTree git status flags
+    endif
+
     call plug#end()
 endif
 
