@@ -13,10 +13,11 @@
     forget = rm --cached
     gd = difftool -g
     gdc = difftool -g --cached
-    lgfile    = log --date=short --reverse --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit --follow
     hist      = log --date=short --reverse --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit
     histr     = log --date=short           --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit
     histlong  = log --date=short --reverse --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit --shortstat
+    histfile  = log --date=short --reverse --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit --follow
+    lgfile    = log --date=short --reverse --pretty=format:'%Cred%h%Creset -%Cgreen(%cd) %Creset- %s %C(bold blue)<%an>%Creset -%C(yellow)%d %Creset' --abbrev-commit --follow
     tagage = !sh -c 'git for-each-ref --sort=taggerdate refs/tags --format=\"%(refname:short)\"'
     sb = status -sb
     whatrelease = name-rev --name-only
@@ -70,7 +71,7 @@
     prompt = false
 
 [difftool "vimdiff"]
-    cmd = "vimdiff --nofork $REMOTE $LOCAL"
+    cmd ="vimdiff --nofork $REMOTE $LOCAL"
 #   cmd = "nvim -d $REMOTE $LOCAL"
 
 [difftool "gvimdiff"]
@@ -78,9 +79,9 @@
 #   cmd = "nvim-qt -d --nofork $REMOTE $LOCAL"
 
 [fetch]
-    fsckObjects = true
-# Needed for the vim pluggin vim-mark because of bad timezones in commits
-#    fsckObjects = false
+#    fsckObjects = true
+# Needed for some vim pluggins because of bad timezones in commits
+    fsckObjects = false
 
 [init]
 	defaultBranch = main
