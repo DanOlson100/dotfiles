@@ -115,7 +115,7 @@ fi
 
 # Add current dir to PATH if it isn't already
 if [[ ! "$PATH" == *./* ]]; then
-    export PATH=./:$PATH
+    export PATH=$PATH:./
 fi
 
 # Setup the Aliases
@@ -139,7 +139,7 @@ fi
 
 # Enable alternate cmds if available
 type nala   >> /dev/null && alias apt='nala '
-type exa    >> /dev/null && alias ls='exa -Fh --color=auto --group-directories-first '
+type exa    >> /dev/null && alias ls='exa -F -h --color=auto --group-directories-first '
 #type bat    >> /dev/null && alias cat='bat '
 type moar   >> /dev/null && alias less='moar '
 
