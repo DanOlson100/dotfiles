@@ -24,8 +24,7 @@ if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
     let g:clone_opt = "--config fetch.fsckobjects=false"
 
     " Main Plugins
-    Plug 'airblade/vim-gitgutter'                       "Git Changes in Gutter
-    Plug 'ap/vim-css-color'                             "CSS color highlighter
+    Plug 'airblade/vim-gitgutter'                       "Git Changes in Gutter Plug 'ap/vim-css-color'                             "CSS color highlighter
     Plug 'chrisbra/vim-diff-enhanced'                   "Use GIT diff algorithms
     Plug 'cohama/lexima.vim', { 'on': 'ToggleAutoClose'} "Auto Close characters
     Plug 'danolson100/molo'                             "Molo Color Scheme
@@ -51,16 +50,24 @@ if !empty(glob("~/.vim/plugged")) || !empty(glob("~/vimfiles/plugged"))
 
     " Advanced Pugins - Load on NFS at Home or Work
     if !empty(glob("~/Videos/"))  || !empty(glob("~/temp"))
-        Plug 'dense-analysis/ale'                           "Auto Linter Engine
-        Plug 'deoplete-plugins/deoplete-jedi'               "Python Deoplete LSP
-        Plug 'neoclide/coc.nvim', { 'branch': 'release', 'on': 'ToggleCoC' }
+
         Plug 'preservim/nerdtree'                           "NerdTree File Browser
-        Plug 'roxma/nvim-yarp'                              "Dep of deoplete.nvim
-        Plug 'roxma/vim-hug-neovim-rpc'                     "Dep of deoplete.nvim
         Plug 'ryanoasis/vim-devicons'                       "NerdTree filetype specific icons
-        Plug 'Shougo/deoplete.nvim'                         "Autocomplete Plugin
         Plug 'tiagofumo/vim-nerdtree-syntax-highlight'      "Adds syntax highlighting to NerdTree
         Plug 'Xuyuanp/nerdtree-git-plugin'                  "NerdTree git status flags
+
+        " Only load these with python3 support
+        if has('python3')
+            Plug 'dense-analysis/ale'                           "Auto Linter Engine
+            Plug 'deoplete-plugins/deoplete-jedi'               "Python Deoplete LSP
+            Plug 'neoclide/coc.nvim', { 'branch': 'release', 'on': 'ToggleCoC' }
+            Plug 'roxma/nvim-yarp'                              "Dep of deoplete.nvim
+            Plug 'roxma/vim-hug-neovim-rpc'                     "Dep of deoplete.nvim
+            Plug 'Shougo/deoplete.nvim'                         "Autocomplete Plugin
+
+            Plug 'ThePrimeagen/harpoon'                         "Jump to Different Files
+
+        endif
     endif
 
     call plug#end()
@@ -495,7 +502,11 @@ let g:deoplete#enable_at_startup = 1
 "  Check these vars to see if disabled g:ale_enable and g:context
 augroup LargeFiles
     let g:large_file = 1048576   " 1MB
-    au BufReadPre * let f=expand("<afile>") | if getfsize(f) > g:large_file | execute "ContextDisable" | execute "ALEDisable" | endif
+    if has('python3')
+        au BufReadPre * let f=expand("<afile>") | if getfsize(f) > g:large_file | execute "ContextDisable" | execute "ALEDisable" | endif
+    else
+        au BufReadPre * let f=expand("<afile>") | if getfsize(f) > g:large_file | execute "ContextDisable" | endif
+    endif
 augroup END
 
 
