@@ -25,6 +25,9 @@
     upstream = rev-parse --symbolic-full-name --abbrev-ref HEAD@{upstream}
     where = remote show origin
 
+[branch]
+    sort = committerdate
+
 [color]
     branch = auto
     diff = auto
@@ -63,8 +66,12 @@
     whitespace = trailing-space,space-before-tab
 
 [diff]
+    algorithm = histogram
+    colorMoved = plain
+    mnemonicPrefix = true
     tool = vimdiff
     guitool = gvimdiff
+    renames = true
     renameLimit = 250
 
 [difftool]
@@ -82,12 +89,21 @@
 #    fsckObjects = true
 # Needed for some vim pluggins because of bad timezones in commits
     fsckObjects = false
+    prune = true
+    pruneTags = true
+    all = true
+
+[grep]
+    patternType = perl
+
+[help]
+    autocorrect = prompt
 
 [init]
 	defaultBranch = main
 
 [merge]
-    conflictStyle = diff3
+    conflictStyle = zdiff3
     tool = vimdiff
     log = true
     branchdesc = true
@@ -95,6 +111,8 @@
 
 [push]
     default = matching
+    autoSetupRemote = true
+    followTags = true
 
 [pull]
     ff = only
@@ -107,6 +125,9 @@
 [status]
     relativePaths = true
     showUntrakedFiles = normal
+
+[tag]
+    sort = version:refname
 
 [url "https://bitbucket.org/"]
     insteadOf = bb:

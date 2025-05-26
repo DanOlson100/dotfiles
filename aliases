@@ -43,6 +43,7 @@ alias egrep='egrep --color=auto'
 alias rsync_cp='rsync -Pvhpr'
 alias rsync_mv='rsync -Pvhpr --remove-sent-files'
 alias ncftpput='ncftpput -f ~/.netrc'
+alias iostat_track='iostat -mxd 1 '
 
 alias agi='sudo apt install'
 alias agr='sudo apt remove'
