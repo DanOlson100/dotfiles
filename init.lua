@@ -78,6 +78,7 @@ require('lazy').setup({
 -- Basic Vim Plugins
     'ap/vim-css-color',                               -- CSS color highlighter
     'chrisbra/vim-diff-enhanced',                     -- Use GIT diff algorithms
+    'equalsraf/neovim-gui-shim',                      -- Neovim GUI Cmds
     'farmergreg/vim-lastplace',                       -- Let vim goto the last edit position except commit msgs.
     'godlygeek/tabular',                              -- For aligning text using :Tab /= or such
     'jreybert/vimagit',                               -- Some git cmds added to Vim
@@ -100,26 +101,37 @@ require('lazy').setup({
             'williamboman/mason-lspconfig.nvim',      -- LSP Config Plugin
             { 'j-hui/fidget.nvim', opts = { }, tag = 'legacy' },       -- UI for LSP Plugins
            'folke/neodev.nvim',                      -- LSP Setup Plugin
+            'saghen/blink.cmp',
         },
     },
 
     -- Git Signs in the Gutter w/ more features than gitgutter
     { 'lewis6991/gitsigns.nvim'},
 
-    -- LSP Completion Plugins (Type Ahead)
-    { 'hrsh7th/nvim-cmp',
-        dependencies = {
-	        'hrsh7th/cmp-nvim-lsp',                   -- LSP Source Plugin
-	        -- 'L3MON4D3/LuaSnip',                       -- LSP Snip
-	        'saadparwaiz1/cmp_luasnip'                -- LSP Completion Source for Snip
-	    },
-    },
+--    -- LSP Completion Plugins (Type Ahead)
+--    { 'hrsh7th/nvim-cmp',
+--        dependencies = {
+--	        'hrsh7th/cmp-nvim-lsp',                   -- LSP Source Plugin
+--	        -- 'L3MON4D3/LuaSnip',                       -- LSP Snip
+--	        'saadparwaiz1/cmp_luasnip'                -- LSP Completion Source for Snip
+--	    },
+--    },
 
     -- LuaSnips Dep of nvim-cmp
     -- Keep seperate from nvim-cmp to execute the build for jsregexp
     {   "L3MON4D3/LuaSnip",
         build = "make install_jsregexp"
     },
+
+   -- New Completion Plugin
+   { 'saghen/blink.cmp',
+       dependencies = { 'rafamadriz/friendly-snippets' },
+
+       --version = '1.*',
+       version = '1.3.1',
+       ---@module 'blink.cmp'
+       ---@type    blink.cmp.Config
+   },
 
     -- Popup for key completion
     -- { 'folke/which-key.nvim', opts = {} },
@@ -132,7 +144,9 @@ require('lazy').setup({
         end,
     },
 
-    -- Lua Rocks Plugin
+--    -- Lua Rocks Plugin
+--    -- This needs to be built, cd ~/.local/share/nvim/lazy/luarocks.nvim/
+--    -- Build with nvim -d build.lua
 --    {   "vhyrro/luarocks.nvim",
 --        priority = 1000, -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
 --        config = true,
@@ -176,6 +190,17 @@ require('lazy').setup({
         --end,
     },
 
+    -- YAML/JSON Key Display
+    { 'jfryy/keytrail.nvim',
+        dependencies = {
+            'nvim-treesitter/nvim-treesitter',
+            'nvim-telescope/telescope.nvim',
+        },
+        config = function()
+            require("keytrail").setup()
+        end,
+    },
+
     -- Rainbow Parens
     { 'HiPhish/rainbow-delimiters.nvim'},
 
@@ -204,7 +229,7 @@ vim.opt.fileformats = "unix,dos,mac"                  -- Support these file syst
 vim.opt.backup = false                                -- Don't Make Backup files
 vim.opt.showcmd = true                                -- Show partial commands in the status line
 vim.opt.modeline = false                              -- Security protection against trojan text files
-vim.opt.title = true                                  -- Show filename in title bar
+vim.opt.title = false                                 -- Show filename in title bar
 
 -- Neovim uses a different format for undo files
 --  Only Neovim uses this file
@@ -521,8 +546,8 @@ vim.api.nvim_create_autocmd( "FileType", { pattern =  {"spice"},                
 -- Disable some providers
 vim.g.loaded_ruby_provider = 0
 vim.g.loaded_node_provider = 0
-vim.g.loaded_perl_provider = 0
-vim.g.loaded_python3_provider = 0
+--vim.g.loaded_perl_provider = 0
+--vim.g.loaded_python3_provider = 0
 
 -- DiffChar Settings
 vim.g.DiffUnit = "Char"
@@ -717,64 +742,108 @@ if mlsp_status then
         ensure_installed = vim.tbl_keys(servers),
     }
 
-    mason_lspconfig.setup_handlers {
-        function(server_name)
-            require('lspconfig')[server_name].setup {
-                capabilities = capabilities,
-                on_attach = on_attach,
-                settings = servers[server_name],
-            }
-        end,
+--    mason_lspconfig.setup_handlers {
+--        function(server_name)
+--            require('lspconfig')[server_name].setup {
+--                capabilities = capabilities,
+--                on_attach = on_attach,
+--                settings = servers[server_name],
+--            }
+--        end,
+--    }
+end
+
+---- nvim-cmp setup
+--local cmp_status, cmp = pcall(require, 'cmp')
+--if cmp_status then
+--
+--    local ls_status, luasnip = pcall(require, 'luasnip')
+--    if ls_status then
+--        luasnip.config.setup {}
+--
+--        cmp.setup {
+--            snippet = {
+--                expand = function(args)
+--                    luasnip.lsp_expand(args.body)
+--                end,
+--            },
+--            mapping = cmp.mapping.preset.insert {
+--                ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+--                ['<C-f>'] = cmp.mapping.scroll_docs(4),
+--                ['<C-Space>'] = cmp.mapping.complete {},
+--                ['<CR>'] = cmp.mapping.confirm {
+--                    behavior = cmp.ConfirmBehavior.Replace,
+--                    select = true,
+--                },
+--                ['<Tab>'] = cmp.mapping(function(fallback)
+--                    if cmp.visible() then
+--                        cmp.select_next_item()
+--                    elseif luasnip.expand_or_jumpable() then
+--                        luasnip.expand_or_jump()
+--                    else
+--                        fallback()
+--                    end
+--                end, { 'i', 's' }),
+--                ['<S-Tab>'] = cmp.mapping(function(fallback)
+--                    if cmp.visible() then
+--                        cmp.select_prev_item()
+--                    elseif luasnip.jumpable(-1) then
+--                        luasnip.jump(-1)
+--                    else
+--                        fallback()
+--                    end
+--                end, { 'i', 's' }),
+--            },
+--            sources = {
+--                { name = 'nvim_lsp' },
+--                { name = 'luasnip' },
+--            },
+--        }
+--    end
+--end
+
+-- Setup Blink
+local blink_status, blink_plug = pcall(require, 'blink')
+if blink_status then
+    blink_plug.setup {
+
+        opts = {
+            keymap = { preset = 'default' },
+            appearance = { nerd_front_variant = 'mono' },
+            completion = { documentation = { auto_show = false} },
+            sources = { default = { 'lsp', 'path', 'snippets', 'buffer'} },
+            fuzzy = { implementation = 'prefer_rust_with_warning' }
+        },
+
+        opts_extend = { "sources.default" }
     }
 end
 
--- nvim-cmp setup
-local cmp_status, cmp = pcall(require, 'cmp')
-if cmp_status then
+-- Setup LSP for Blink.cmp
+local lsp_status, lsp_plug = pcall(require, 'nvim-lspconfig')
+if lsp_status then
+    lsp_plug.setup {
+        opts = {
+            servers = {
+                lua_ls = {}
+            }
+        },
 
-    local ls_status, luasnip = pcall(require, 'luasnip')
-    if ls_status then
-        luasnip.config.setup {}
+        config = function(_, opts)
+            local lspconfig = require('lspconfig')
+            for server, config in pairs(opts.servers) do
+                config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
+                lspconfig[server].setup(config)
+            end
+        end
 
-        cmp.setup {
-            snippet = {
-                expand = function(args)
-                    luasnip.lsp_expand(args.body)
-                end,
-            },
-            mapping = cmp.mapping.preset.insert {
-                ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-                ['<C-f>'] = cmp.mapping.scroll_docs(4),
-                ['<C-Space>'] = cmp.mapping.complete {},
-                ['<CR>'] = cmp.mapping.confirm {
-                    behavior = cmp.ConfirmBehavior.Replace,
-                    select = true,
-                },
-                ['<Tab>'] = cmp.mapping(function(fallback)
-                    if cmp.visible() then
-                        cmp.select_next_item()
-                    elseif luasnip.expand_or_jumpable() then
-                        luasnip.expand_or_jump()
-                    else
-                        fallback()
-                    end
-                end, { 'i', 's' }),
-                ['<S-Tab>'] = cmp.mapping(function(fallback)
-                    if cmp.visible() then
-                        cmp.select_prev_item()
-                    elseif luasnip.jumpable(-1) then
-                        luasnip.jump(-1)
-                    else
-                        fallback()
-                    end
-                end, { 'i', 's' }),
-            },
-            sources = {
-                { name = 'nvim_lsp' },
-                { name = 'luasnip' },
-            },
-        }
-    end
+        --config = function()
+        --    local capabilities = require('blink.cmp').get_lsp_capabilities()
+        --    local lspconfig = require('lspconfig')
+
+        --    lspconfig['lua_ls'].setup({ capabilties = capabilities })
+        --end
+    }
 end
 
 -- Setup Harpoon
