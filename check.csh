@@ -16,8 +16,8 @@ foreach file ( `ls $localdir` )
             diff $file ~/.vim/$file
             breaksw
         case 'init.lua':
-            echo "Checking: $file"
-            diff $file ~/.config/nvim/$file
+        case 'ginit.vim':
+            echo "Skipping: $file"
             breaksw
         case 'install.sh':
             breaksw
