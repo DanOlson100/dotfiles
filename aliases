@@ -64,6 +64,9 @@ alias gdc='git difftool --cached'
 alias ggd='git difftool -g'
 alias ggdc='git difftool -g --cached'
 
+#Make shortcuts
+alias make_nvim='make CMAKE_BUILD_TYPE=RelWithDebInfo CMAKE_INSTALL_REFIX=/home/olson/.local'
+
 alias findorphans='find / -nouser -ls'
 
 alias background='feh --no-fehbg --bg-fill '
