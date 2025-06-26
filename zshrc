@@ -37,7 +37,7 @@ _comp_options+=(globdots)
 # Set CLI Color and Editors
 export REPORTTIME=30
 export CLICOLOR=1
-export EDITOR=vim
+export EDITOR=nvim
 export VISUAL=gvim
 export SHELL=`which zsh`
 export HOST=`hostname`

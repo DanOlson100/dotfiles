@@ -60,8 +60,8 @@
 
 [core]
     pager = less -FRX 
-    editor = vim
-#   editor = nvim
+    #editor = vim
+    editor = nvim
     excludesfile = ~/.gitignore_global
     whitespace = trailing-space,space-before-tab
 
@@ -69,8 +69,10 @@
     algorithm = histogram
     colorMoved = plain
     mnemonicPrefix = true
-    tool = vimdiff
-    guitool = gvimdiff
+    #tool = vimdiff
+    tool = nvimdiff
+    #guitool = gvimdiff
+    guitool = nvim-qt
     renames = true
     renameLimit = 250
 
@@ -79,11 +81,15 @@
 
 [difftool "vimdiff"]
     cmd ="vimdiff --nofork $REMOTE $LOCAL"
-#   cmd = "nvim -d $REMOTE $LOCAL"
 
 [difftool "gvimdiff"]
     cmd = "gvimdiff --nofork $REMOTE $LOCAL"
-#   cmd = "nvim-qt -d --nofork $REMOTE $LOCAL"
+
+[difftool "nvimdiff"]
+    cmd = "nvim -d $REMOTE $LOCAL"
+
+[difftool "nvim-qt"]
+    cmd = "nvim-qt --nofork -- -d $REMOTE $LOCAL"
 
 [fetch]
 #    fsckObjects = true
